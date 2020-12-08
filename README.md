@@ -25,7 +25,7 @@ A React widget for Airport animations with flight departures/arrivials.
 ![screenshot](screenshot.png)
 
 [View Demo](http://tokyo800.jp/mina/react-widget-airport/)  
-(may not work in Firefox...)
+(may not work in some browsers: e.g. Facebook browsers)
 
 
 <a id="about"></a>
@@ -33,18 +33,25 @@ A React widget for Airport animations with flight departures/arrivials.
 
 #### Embedded React Widget
 
-It attempts to show how you can bundle your React app into UMD library.
+It attempts to show how you can bundle your React app into a widget (UMD library).
 I could have made it installed as a dependency for other repos,
 and as a matter of fact, that would be rather a popular approach,
 or has more demands when component *reuse* is the concern.
 So, I would say the demand is very limited,
 nonetheless, it should help someone out there.
 
-Instead of being *"installed"*, this one is to be *"embedded"* to other apps.
-So, this is how you *"embed"* it:
+Instead of being *"installed"*, this one is to be *"embedded"* in other apps.  
+(or, you can totally call it from another React apps)
+
+It exposes the widget *globally* (in our case `Airport`).  
+So, this is how it is done:
 
 ```html
 <script type="text/javascript" src="./airport.app.js"></script>
+
+<script type="text/javascript">
+Airport.app.init();
+</script>
 ```
 
 #### react-pixi-fiber
@@ -52,18 +59,33 @@ So, this is how you *"embed"* it:
 As an example, I also implemented a canvas animation using
 [reac-pixi-fiber](https://github.com/michalochman/react-pixi-fiber).
 Unlike [react-pixi](https://github.com/inlet/react-pixi),
-it is a bit tricky, so I hope to help someone as well.
+it is a bit tricky, so I hope it helps someone as well.
 
 
 #### SharedWorker
 
-Also, I am outputting another bundle file for
-[SharedWorker](https://developer.mozilla.org/en-US/docs/Web/API/SharedWorker)
-which is totally unnecessary,
-but is necessary when we want to update the widget embedded.
-But, honestly, I should have used [Emitter](https://github.com/emitter-io/emitter) instead.
-It is ugly as hell to output 2 files...
+Also, it outputs another bundle file for
+*[SharedWorker](https://developer.mozilla.org/en-US/docs/Web/API/SharedWorker)*
+which allows messaging between the caller and the widget.
 
+Basically, your app (caller for the widget) can send a message:
+
+```js
+const worker = new SharedWorker('./airport.worker.js');
+
+worker.port.postMessage({
+  action: 'resize',
+  payload: {
+    width: window.innerWidth,
+    height: window.innerHeight,
+  },
+});
+```
+
+However, to be honest, I should have used *[Emitter](https://github.com/emitter-io/emitter)* instead.  
+It is ugly as hell to output 2 files for 1 widget...
+
+&nbsp;
 
 ### # Issues
 
@@ -121,7 +143,6 @@ yarn add --dev webpack webpack-cli
 - style-loader
 - css-loader
 - postcss-loader
-- <s>worker-loader</s>
 
 ```
 yarn add --dev babel-loader file-loader style-loader css-loader postcss-loader
@@ -146,7 +167,6 @@ yarn add --dev webpack-merge clean-webpack-plugin html-webpack-plugin license-we
 - @babel/preset-react
 - react
 - react-dom
-- <s>react-hooks-worker</s>
 
 ```
 yarn add react react-dom
@@ -225,7 +245,8 @@ It's just that you often encouter issues when making it work with `babel`...
 
 In the above I have two entries, but this is not necessary.  
 Along with the main bundle,
-I just needed another bundle output for `SharedWorker` to dynamically update props.
+I just needed another bundle output for
+`SharedWorker` for messaging between the starter and the widget (to dynamically update props).
 
 If you were to output only 1 bundle, you would do:
 
@@ -259,7 +280,7 @@ export const init = config => {
 
 As you can see, it only exports `init` function using `export`.  
 If you want to use `export default`,
-*[then you need a special setup for "babel"](#4-1-module-exports-issues)*.
+then *[you need a special setup for babel](#5-1-module-exports-issues)*.
 
 The module is now exposed *globally* as `Airport`.
 
@@ -344,8 +365,9 @@ export const init = config => {
 ```
 
 Here, the prop `config` is totally static, and it is given from whoever passes.  
-However, unfortunately, React won't pick up the changes
-even when the starter change the content of the prop.
+By saying *"static"*, it means, React won't pick up the changes
+even when the starter change the content of the prop.  
+(that's why we need some tools like *SharedWorker*, or *Emitter* to allow messaging)
 
 Now, it is the `Widget` component which renders the actual content:
 
@@ -426,9 +448,7 @@ Also, `Widget` refers to `airport.worker.js`.
 
 From HTML, we can update the size of the widget.
 
-However, I regret now that I should have used
-[Emitter](https://github.com/emitter-io/emitter)
-instead...  
+However, I regret now that I should have used *[Emitter](https://github.com/emitter-io/emitter)* instead...  
 It is ugly to output 2 bundles for a widget...
 
 
