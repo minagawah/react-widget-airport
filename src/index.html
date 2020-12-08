@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="/assets/favicon.ico">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Airport</title>
+</head>
+<body>
+  <noscript>
+    <strong>We're sorry but the app doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+  </noscript>
+
+  <div id="airport"></div>
+
+  <!--
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/core-js/3.8.0/minified.min.js"></script>
+<script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.4.5/pixi.min.js"></script>
+<script crossorigin src="https://cdn.jsdelivr.net/npm/react-pixi-fiber@1.0.0-beta.4/umd/react-pixi-alias.production.min.js"></script>
+<script type="text/javascript" src="/airport.app.js"></script>
+  -->
+
+<script type="text/javascript" src="<%= htmlWebpackPlugin.files.js[0] %>"></script>
+
+<script type="text/javascript">
+const gray300 = '#e2e2e2';
+const colorNorm = '#19f7ff';
+const colorFull = '#de3d00';
+
+Airport.app.init({
+  width: 800,
+  height: 600,
+  num_of_ports: 5,
+  port_capacity: 5,
+  port_color_norm: colorNorm,
+  port_color_full: colorFull,
+  num_of_planes: 50,
+  plane_path_max: 50,
+  plane_path_spacing: 300,
+  plane_holding_distance: 5,
+  plane_holding_color: '#707070',
+  plane_flight_color: colorNorm,
+  plane_unique_color: '#de3d00',
+  plane_path_color: gray300,
+  text_color: gray300,
+  text_color_norm: colorNorm,
+  text_color_full: colorFull,
+}); 
+
+const worker = new SharedWorker('./airport.worker.js');
+
+setTimeout(() => {
+  worker.port.postMessage({
+    action: 'resize',
+    payload: {
+      width: window.innerWidth * 0.95,
+      height: window.innerHeight * 0.95,
+    },
+  });
+}, 3000);
+
+</script>
+
+</body>
+</html>
