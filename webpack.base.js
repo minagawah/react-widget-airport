@@ -45,6 +45,8 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx'],
     alias: {
+      'pixi.js': path.resolve(__dirname, 'src/lib/pixi.js'),
+      'pixi.js-stable': path.resolve(__dirname, 'node_modules/pixi.js'),
       'react-pixi$': 'react-pixi-fiber/react-pixi-alias',
       '@': path.join(__dirname, 'src'),
     },

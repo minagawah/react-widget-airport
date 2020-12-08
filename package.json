@@ -1,6 +1,6 @@
 {
   "name": "react-widget-airport",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": false,
   "description": "A React widget for Airport animations with flight departures/arrivials.",
   "main": "dist/airport.js",
@@ -18,7 +18,7 @@
     "react-pixi-fiber"
   ],
   "author": "Hiroki Minagawa <minagawa@tokyo800.jp>",
-  "license": "MIT",
+  "license": "(Unlicense OR MIT)",
   "bugs": {
     "url": "https://github.com/minagawah/react-widget-airport/issues"
   },
@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "pixi.js": "^5.3.3",
+    "pixi.js-legacy": "^5.3.3",
     "ramda": "^0.27.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",

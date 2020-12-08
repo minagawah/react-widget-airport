@@ -22,7 +22,7 @@ A React widget for Airport animations with flight departures/arrivials.
 [6. LICENSE](#6-license)  
 
 
-![screenshot](screenshot.jpg)
+![screenshot](screenshot.png)
 
 [View Demo](http://tokyo800.jp/mina/react-widget-airport/)  
 (may not work in Firefox...)
@@ -84,7 +84,7 @@ Yeah. We all fail, right?
 
 
 ```
-yarn add ramda react react-dom pixi.js react-pixi-fiber@1.0.0-beta.4
+yarn add ramda react react-dom pixi.js pixi.js-legacy react-pixi-fiber@1.0.0-beta.4
 
 yarn add --dev @babel/core @babel/preset-env @babel/preset-react @babel/cli core-js@3 @babel/runtime-corejs3 babel-loader file-loader style-loader css-loader postcss-loader webpack webpack-cli webpack-merge clean-webpack-plugin html-webpack-plugin license-webpack-plugin autoprefixer prettier http-server
 ```
@@ -158,11 +158,12 @@ yarn add --dev @babel/preset-react
 
 - ramda
 - pixi.js
+- pixi.js-legacy
 - react-pixi-fiber@1.0.0-beta.4 ([issue](https://github.com/michalochman/react-pixi-fiber/issues/156#issuecomment-578214553))
 - http-server
 
 ```
-yarn add ramda pixi.js react-pixi-fiber@1.0.0-beta.4
+yarn add ramda pixi.js pixi.js-legacy react-pixi-fiber@1.0.0-beta.4
 
 yarn add --dev http-server
 ```

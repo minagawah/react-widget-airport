@@ -106,6 +106,7 @@ export const makeAirportOptions = (given = {}) => {
 };
 
 export const DEFAULT_STAGE_OPTIONS = {
+  forceCanvas: true,
   backgroundColor: pound_hex_to_dec(DEFAULT_AIRPORT_OPTIONS.background_color),
   resolution: window.devicePixelRatio,
   width: 800,
