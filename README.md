@@ -22,7 +22,7 @@ A React widget for Airport animations with flight departures/arrivials.
 [6. LICENSE](#6-license)  
 
 
-![screenshot](screenshot.jpg "Screenshot")
+![screenshot](screenshot.jpg)
 
 [View Demo](http://tokyo800.jp/mina/react-widget-airport/)  
 (may not work in Firefox...)
