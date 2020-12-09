@@ -34,26 +34,32 @@ export const str_rgb_to_rgb = str => {
       '^rgba{0,1}\\(([0-9]+), ([0-9]+), ([0-9]+).*(:?, ([\\d\\.]+))?\\)'
     )
   );
+
   const rgb = m
     ? m
         .slice(1)
         .map(Math.trunc)
         .filter(n => !isNaN(n))
     : [0, 0, 0];
+
   if (rgb.length < 4) {
     rgb.push(1);
   }
+
   return rgb;
 };
 
 export const hex_to_rgb = (hex, alpha = 1) => {
   const rgb = [];
+
   // eslint-disable no-bitwise
   rgb[0] = (hex >> 16) & 0xff;
   rgb[1] = (hex >> 8) & 0xff;
   rgb[2] = hex & 0xff;
   // eslint-enable no-bitwise
+
   alpha = alpha < 0 ? 0 : alpha > 1 ? 1 : alpha;
+
   if (alpha === 1) {
     rgb[3] = alpha;
   }
@@ -151,6 +157,7 @@ export const hsl_to_rgb = (hsl = []) => {
   r = Math.round((r + m) * 255);
   g = Math.round((g + m) * 255);
   b = Math.round((b + m) * 255);
+
   console.log(`[lib/color] [R] ${r} [G] ${g} [B] ${b}`);
 
   return [r, g, b];
@@ -166,9 +173,11 @@ export const rgb_to_pound_hex = (rgb = []) => {
   if (hexR.length === 1) {
     hexR = `0${r}`;
   }
+
   if (hexG.length === 1) {
     hexG = `0${g}`;
   }
+
   if (hexB.length == 1) {
     hexB = `0${b}`;
   }

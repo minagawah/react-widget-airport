@@ -106,8 +106,10 @@ export const multicurve = (points, ctx) => {
   let p0, p1, midx, midy;
   // For the first in `points`.
   ctx.moveTo(points[0].x, points[0].y);
+
   // For all except for the first and the last.
   const size = points.length;
+
   for (let i = 1; i < size - 2; i += 1) {
     p0 = points[i];
     p1 = points[i + 1];
@@ -115,9 +117,11 @@ export const multicurve = (points, ctx) => {
     midy = (p0.y + p1.y) / 2;
     ctx.quadraticCurveTo(p0.x, p0.y, midx, midy);
   }
+
   // For the last in `points`.
   p0 = points[size - 2];
   p1 = points[size - 1];
+
   ctx.quadraticCurveTo(p0.x, p0.y, p1.x, p1.y);
 };
 
