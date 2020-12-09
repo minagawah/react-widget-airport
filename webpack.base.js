@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 // aconst EXTERNALS = makeExternals([
@@ -74,22 +75,29 @@ module.exports = {
       },
     ],
   },
-  plugins: [new CleanWebpackPlugin()],
+  plugins: [
+    new CleanWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      chunks: ['app'],
+      template: './src/index.html',
+      inject: false,
+    }),
+  ],
 };
 
-function makeExternals (mapping) {
-  return mapping.reduce(
-    (acc, [name, url, alt]) => ({
-      ...acc,
-      [name]: ['commonjs', 'commonjs2', 'amd', 'root'].reduce(
-        (acc2, key) => ({
-          ...acc2,
-          // [key]: [url, key === 'root' ? alt || name : name],
-          [key]: key === 'root' ? alt || name : name,
-        }),
-        {}
-      ),
-    }),
-    {}
-  );
-}
+// function makeExternals (mapping) {
+//   return mapping.reduce(
+//     (acc, [name, url, alt]) => ({
+//       ...acc,
+//       [name]: ['commonjs', 'commonjs2', 'amd', 'root'].reduce(
+//         (acc2, key) => ({
+//           ...acc2,
+//           // [key]: [url, key === 'root' ? alt || name : name],
+//           [key]: key === 'root' ? alt || name : name,
+//         }),
+//         {}
+//       ),
+//     }),
+//     {}
+//   );
+// }

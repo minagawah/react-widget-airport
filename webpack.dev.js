@@ -13,7 +13,6 @@
  */
 const path = require('path');
 const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { merge } = require('webpack-merge');
 // const APIPlugin = require('webpack/lib/APIPlugin');
 
@@ -25,12 +24,5 @@ module.exports = merge(base, {
   optimization: {
     minimize: false,
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      chunks: ['app'],
-      template: './src/index.html',
-      inject: false,
-    }),
-    // new APIPlugin(),
-  ],
+  // plugins: [new APIPlugin()],
 });

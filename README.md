@@ -321,7 +321,6 @@ is replaced with:
 Two things to note about the above HTML file.
 
 First of all, we have the HTML only for a *testing* reason.  
-That is why I use `html-webpack-plugin` only in `webpack.dev.js`.
 
 Secondly, I could have statically served HTML file.
 Instead, I use `html-webpack-plugin` to output to `dist`

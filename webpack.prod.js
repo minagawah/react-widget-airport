@@ -8,9 +8,10 @@ const base = require('./webpack.base.js');
 
 module.exports = merge(base, {
   mode: 'production',
-  // devtool: 'cheap-source-map',
-  devtool: 'hidden-source-map',
   plugins: [new LicenseWebpackPlugin()],
+  optimization: {
+    minimize: true,
+  },
   performance: {
     // Exceeds the max size...
     // Default: 244 KiB
