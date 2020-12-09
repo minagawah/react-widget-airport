@@ -18,7 +18,8 @@ export const Widget = ({ config = {} }) => {
   const [airportOptions, setAirportOptions] = useState(DEFAULT_AIRPORT_OPTIONS);
 
   useEffect(() => {
-    setWorker(new SharedWorker('./airport.worker.js'));
+    console.log('[Airport] __webpack_hash__: ', __webpack_hash__);
+    setWorker(new SharedWorker(`./airport.worker.js?${__webpack_hash__}`));
     setAirportOptions(makeAirportOptions(config));
     setStageOptions({
       width: window.innerWidth * 0.65,

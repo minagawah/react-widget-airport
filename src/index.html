@@ -50,7 +50,11 @@ Airport.app.init({
   text_color_full: colorFull,
 }); 
 
-const worker = new SharedWorker('./airport.worker.js');
+const worker = new SharedWorker('./<%= (() => {
+  const file = htmlWebpackPlugin.files.js[0] || [];
+  const [filename, hash] = file.split('?');
+  return `airport.worker.js?${hash}`;
+})() %>');
 
 setTimeout(() => {
   worker.port.postMessage({
