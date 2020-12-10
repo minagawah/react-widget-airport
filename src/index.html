@@ -25,35 +25,35 @@
 <script type="text/javascript" src="<%= htmlWebpackPlugin.files.js[0] %>"></script>
 
 <script type="text/javascript">
-const gray300 = '#e2e2e2';
-const colorNorm = '#19f7ff';
-const colorFull = '#de3d00';
+const WEBPACK_HASH = '<%= __webpack_hash__ %>';
+const WORKER_PATH = `./airport.worker.js?${WEBPACK_HASH}`;
+
+const GRAY_300 = '#e2e2e2';
+const COLOR_NORM = '#19f7ff';
+const COLOR_FULL = '#de3d00';
 
 Airport.app.init({
   width: 800,
   height: 600,
   num_of_ports: 5,
   port_capacity: 5,
-  port_color_norm: colorNorm,
-  port_color_full: colorFull,
+  port_color_norm: COLOR_NORM,
+  port_color_full: COLOR_FULL,
   num_of_planes: 50,
   plane_path_max: 50,
   plane_path_spacing: 300,
   plane_holding_distance: 5,
   plane_holding_color: '#707070',
-  plane_flight_color: colorNorm,
+  plane_flight_color: COLOR_NORM,
   plane_unique_color: '#de3d00',
-  plane_path_color: gray300,
-  text_color: gray300,
-  text_color_norm: colorNorm,
-  text_color_full: colorFull,
+  plane_path_color: GRAY_300,
+  text_color: GRAY_300,
+  text_color_norm: COLOR_NORM,
+  text_color_full: COLOR_FULL,
+  worker_path: WORKER_PATH,
 }); 
 
-const worker = new SharedWorker('./<%= (() => {
-  const file = htmlWebpackPlugin.files.js[0] || [];
-  const [filename, hash] = file.split('?');
-  return `airport.worker.js?${hash}`;
-})() %>');
+const worker = new SharedWorker(WORKER_PATH);
 
 setTimeout(() => {
   worker.port.postMessage({
@@ -63,7 +63,7 @@ setTimeout(() => {
       height: window.innerHeight,
     },
   });
-}, 2400);
+}, 1000);
 
 </script>
 

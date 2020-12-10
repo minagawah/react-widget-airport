@@ -1,6 +1,8 @@
 import { pound_hex_to_dec } from '@/lib/color';
 import { kebab_to_camel } from '@/lib/utils';
 
+export const DEFAULT_WORKER_PATH = './airport.worker.js';
+
 export const DEFAULT_SIZE = {
   width: 800,
   height: 600,

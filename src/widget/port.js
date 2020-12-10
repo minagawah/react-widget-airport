@@ -3,7 +3,7 @@ import { Text, CustomPIXIComponent, usePixiTicker } from 'react-pixi-fiber';
 import * as PIXI from 'pixi.js';
 
 import * as mathlib from '@/lib/math';
-import { DEFAULT_AIRPORT_OPTIONS, TEXT_FONT_FAMILY } from '@/lib/constants';
+import { DEFAULT_AIRPORT_OPTIONS, TEXT_FONT_FAMILY } from '@/constants';
 
 const { int } = mathlib;
 

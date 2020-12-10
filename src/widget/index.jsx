@@ -4,11 +4,12 @@ import { Stage } from 'react-pixi-fiber';
 import { int } from '@/lib/math';
 import { pound_hex_to_dec } from '@/lib/color';
 import {
+  DEFAULT_WORKER_PATH,
   DEFAULT_SIZE,
   DEFAULT_AIRPORT_OPTIONS,
   DEFAULT_STAGE_OPTIONS,
   makeAirportOptions,
-} from '@/lib/constants';
+} from '@/constants';
 
 import { AirportContent as Content } from './content';
 
@@ -18,13 +19,16 @@ export const Widget = ({ config = {} }) => {
   const [airportOptions, setAirportOptions] = useState(DEFAULT_AIRPORT_OPTIONS);
 
   useEffect(() => {
-    console.log('[Airport] __webpack_hash__: ', __webpack_hash__);
-    setWorker(new SharedWorker(`./airport.worker.js?${__webpack_hash__}`));
+    const instance = new SharedWorker(config.worker_path || DEFAULT_WORKER_PATH);
+    setWorker(instance);
+
     setAirportOptions(makeAirportOptions(config));
+
     setStageOptions({
       width: window.innerWidth * 0.65,
       height: window.innerHeight * 0.65,
     });
+
     return () => {
       instance.terminate();
     };
