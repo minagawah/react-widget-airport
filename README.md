@@ -403,6 +403,7 @@ export const Widget = ({ config: given }) => {
 
   useEffect(() => {
     if (worker && worker.port) {
+
       worker.port.onmessage = (event = {}) => {
         const { data = {} } = event;
         const { action, payload } = data;

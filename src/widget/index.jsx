@@ -35,15 +35,14 @@ export const Widget = ({ config: given }) => {
   useEffect(() => {
     if (worker && worker.port) {
       worker.port.onmessage = (event = {}) => {
-        console.log('(widget) [index] ++++ onmessage()');
         const { data = {} } = event;
         const { action, payload } = data;
 
+        console.log('(widget) [index] ++++ onmessage()');
         console.log('(widget) [index] action: ', action);
 
         if (action && action === 'resize' && payload) {
           const { width, height } = payload;
-
           console.log(`(widget) [index] ${int(width)}x${int(height)}`);
 
           if (width && height) {

@@ -120,7 +120,8 @@ export const usePlanes = () => {
 
   const resetPlanes = ({ ports = [], num_of_planes }) => {
     console.log('(widget) [plane] RESET --> PLANES');
-    console.log(`(widget) [plane] ports.length: ${ports.length}`);
+
+    // console.log(`(widget) [plane] ports.length: ${ports.length}`);
 
     setPlanes([]);
 
@@ -172,7 +173,7 @@ export const usePlanes = () => {
         _planes.push(p);
       }
 
-      console.log(`(widget) [plane] planes.length: ${_planes.length}`);
+      // console.log(`(widget) [plane] planes.length: ${_planes.length}`);
 
       setPlanes(_planes);
     }
@@ -180,16 +181,14 @@ export const usePlanes = () => {
   // END OF: resetPlanes()
 
   const updatePlanes = ({
-    cw,
-    ch,
-    tick,
-    dt,
-    approachingDist,
+    vars: { cw, ch, tick, dt, approachingDist },
     ports = [],
-    num_of_planes,
-    plane_path_modular_segment,
-    plane_path_max,
-    plane_holding_distance,
+    options: {
+      num_of_planes,
+      plane_path_modular_segment,
+      plane_path_max,
+      plane_holding_distance,
+    },
   }) => {
     const _planes = planes.slice();
 

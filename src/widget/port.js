@@ -145,14 +145,18 @@ export const usePorts = () => {
         _ports.push(p);
       }
 
-      console.log(`(widget) [port] ports.length: ${_ports.length}`);
+      // console.log(`(widget) [port] ports.length: ${_ports.length}`);
 
       setPorts(_ports);
     }
   };
   // END OF: resetPorts()
 
-  const updatePorts = ({ tick, planes = [], num_of_ports }) => {
+  const updatePorts = ({
+    vars: { tick },
+    planes = [],
+    options: { num_of_ports },
+  }) => {
     const _ports = ports.slice();
 
     if (_ports.length && planes.length) {

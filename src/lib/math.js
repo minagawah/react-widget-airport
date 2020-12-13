@@ -19,11 +19,12 @@ export const rand = (min, max) => {
   return min + Math.random() * (max - min);
 };
 
-// export const rand_int = range => Math.floor(Math.random() * range);
-// /* alias */ export const randInt = rand_int;
+// const rand_int = range => Math.floor(Math.random() * range);
 
-export const randInt = (min, max) =>
+export const rand_int = (min, max) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
+
+/* alias */ export const randInt = rand_int;
 
 /**
  * Get the norm for `val` between `min` and `max`.

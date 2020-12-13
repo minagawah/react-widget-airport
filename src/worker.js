@@ -3,7 +3,7 @@ import 'core-js';
 const arr = [];
 
 onconnect = (e = {}) => {
-  console.log('(widget::airport.worker) Connected');
+  console.log('(widget.worker) Connected');
   const { ports = [] } = e;
   const [port] = ports;
 
@@ -11,20 +11,18 @@ onconnect = (e = {}) => {
 
   port.onmessage = (event = {}) => {
     const { data } = event;
-    console.log('(widget::airport.worker) Received a message.');
+    console.log('(widget.worker) Received a message.');
 
     if (data) {
       if (data.action && data.action === 'close') {
-        console.log('(widget::airport.worker) Closing');
+        console.log('(widget.worker) Closing');
         port.close();
       } else {
-        console.log('(widget::airport.worker) Posting: ', data);
+        console.log('(widget.worker) Posting: ', data);
         arr.forEach(p => {
           p.postMessage(data);
         });
       }
-    } else {
-      console.log('(widget::airport.worker) ???? event: ', event);
     }
   };
 

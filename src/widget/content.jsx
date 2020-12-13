@@ -56,7 +56,7 @@ export const AirportContent = ({ cw, ch, options }) => {
     const approachingDist = portSpacingDist * 0.33;
     const portRadius = getPortRadius(portSpacingDist);
 
-    console.log('(widget) [content] RESET!!!!!!!!!!!!');
+    console.log('(widget) [content] RESET RESET RESET !!!!!');
     console.log(`(widget) [content] ${int(cw)}x${int(ch)}`);
 
     // console.log(`(widget) [content] num_of_ports: ${num_of_ports}`);
@@ -115,15 +115,15 @@ export const AirportContent = ({ cw, ch, options }) => {
     });
 
     updatePorts({
+      vars: pick(['tick'], vars),
       planes,
-      tick: vars.tick,
-      ...pick(['num_of_ports'], options),
+      options: pick(['num_of_ports'], options),
     });
 
     updatePlanes({
-      ...pick(['cw', 'ch', 'tick', 'dt', 'approachingDist'], vars),
+      vars: pick(['cw', 'ch', 'tick', 'dt', 'approachingDist'], vars),
       ports,
-      ...pick(
+      options: pick(
         [
           'num_of_planes',
           'plane_path_modular_segment',

@@ -1,6 +1,6 @@
 {
   "name": "react-widget-airport",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "private": false,
   "description": "A React widget for Airport animations with flight departures/arrivials.",
   "main": "dist/airport.js",
