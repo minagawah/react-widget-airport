@@ -15,6 +15,9 @@ A React widget for Airport animations with flight departures/arrivials.
 [4. How It Works](#4-how-it-works)  
 &nbsp; &nbsp; [4-1. UMD Library](#4-1-umd-library)  
 &nbsp; &nbsp; [4-2. App Structure](#4-2-app-structure)  
+&nbsp; &nbsp; &nbsp; &nbsp; [(a) Basic Entry](#a-basic-entry)  
+&nbsp; &nbsp; &nbsp; &nbsp; [(b) react-pixi-fiber](#b-react-pixi-fiber)  
+&nbsp; &nbsp; &nbsp; &nbsp; [(c) Calling from Other React Apps](#c-calling-from-other-react-apps)  
 [5. Notes](#5-notes)  
 &nbsp; &nbsp; [5-1. Module Exports Issues](#5-1-module-exports-issues)  
 &nbsp; &nbsp; [5-2. `webpack-dev-server`](#5-2-webpack-dev-server)  
@@ -42,7 +45,7 @@ So, I would say the demand is very limited,
 nonetheless, it should help someone out there.
 
 Instead of being *"installed"*, this one is to be *"embedded"* in other apps.  
-(or, you can totally call it from another React apps. *[Example](#c--calling-from-other-react-apps)*)
+(or, you can totally call it from another React apps. *[Example](#c-calling-from-other-react-apps)*)
 
 It exposes the widget *globally* (in our case `Airport`).  
 So, this is how it is done:
