@@ -12,7 +12,9 @@ import { usePlanes, PlaneGraphics } from './plane';
 
 const { int } = mathlib;
 
-const initialVars = {
+const DEBOUNCE_MSEC = 400;
+
+const DEFAULT_VARS = {
   cw: 0,
   ch: 0,
   lt: null,
@@ -38,32 +40,32 @@ const getPortRadius = range => {
 };
 
 export const AirportContent = ({ cw, ch, options }) => {
-  const [vars, setVars] = useState(initialVars);
+  const [vars, setVars] = useState(DEFAULT_VARS);
   const { ports, resetPorts, updatePorts } = usePorts(null);
   const { planes, resetPlanes, updatePlanes } = usePlanes(null);
 
-  const cwDelay = useDebounce(cw, 400);
-  const chDelay = useDebounce(ch, 400);
+  const cwDelay = useDebounce(cw, DEBOUNCE_MSEC);
+  const chDelay = useDebounce(ch, DEBOUNCE_MSEC);
 
   const { num_of_ports, num_of_planes, port_capacity } = options;
 
-  const reset = () => {
-    console.log('[Airport] ==============================');
-    console.log('[Airport] RESET RESET RESET RESET RESET');
-    console.log('[Airport] ==============================');
-
+  // RESET #1: Setting the canvas size.
+  useEffect(() => {
     const avg = (cw + ch) / 2;
     const portSpacingDist = (avg / num_of_ports) * 1.1;
     const approachingDist = portSpacingDist * 0.33;
     const portRadius = getPortRadius(portSpacingDist);
 
-    console.log(`[Airport] num_of_ports: ${num_of_ports}`);
-    console.log(`[Airport] num_of_planes: ${num_of_planes}`);
-    console.log(`[Airport] port_capacity: ${port_capacity}`);
-    console.log(`[Airport] canvas: ${int(cw)} x ${int(ch)}`);
-    console.log(`[Airport] portSpacingDist: ${int(portSpacingDist)}`);
-    console.log(`[Airport] approachingDist: ${int(approachingDist)}`);
-    console.log(`[Airport] portRadius: ${portRadius}`);
+    console.log('(widget) [content] RESET!!!!!!!!!!!!');
+    console.log(`(widget) [content] ${int(cw)}x${int(ch)}`);
+
+    // console.log(`(widget) [content] num_of_ports: ${num_of_ports}`);
+    // console.log(`(widget) [content] num_of_planes: ${num_of_planes}`);
+    // console.log(`(widget) [content] port_capacity: ${port_capacity}`);
+    // console.log(`(widget) [content] canvas: ${int(cw)} x ${int(ch)}`);
+    // console.log(`(widget) [content] portSpacingDist: ${int(portSpacingDist)}`);
+    // console.log(`(widget) [content] approachingDist: ${int(approachingDist)}`);
+    // console.log(`(widget) [content] portRadius: ${portRadius}`);
 
     setVars({
       ...vars,
@@ -77,9 +79,26 @@ export const AirportContent = ({ cw, ch, options }) => {
       portSpacingDist,
       approachingDist,
     });
-  };
+  }, [cwDelay, chDelay]);
 
-  const update = (delta = 0) => {
+  // RESET #2: Reset ports when the canvas size was reset.
+  useEffect(() => {
+    if (vars.portRadius > 1) {
+      resetPorts({
+        cw,
+        ch,
+        ...pick(['portSpacingDist'], vars),
+        ...pick(['num_of_ports'], options),
+      });
+    }
+  }, [vars.portRadius]);
+
+  // RESET #3: Reset planes when ports were reset.
+  useEffect(() => {
+    resetPlanes({ ports, ...pick(['num_of_planes'], options) });
+  }, [ports.length]);
+
+  usePixiTicker(() => {
     let { lt, et, tick } = vars;
     const now = Date.now();
     const dt = mathlib.clamp((now - lt) / (1000 / 60), 0.001, 10);
@@ -94,28 +113,20 @@ export const AirportContent = ({ cw, ch, options }) => {
       et,
       tick,
     });
-  };
 
-  useEffect(() => {
-    reset();
-    resetPorts({
-      cw,
-      ch,
-      ...pick(['portSpacingDist'], vars),
+    updatePorts({
+      planes,
+      tick: vars.tick,
       ...pick(['num_of_ports'], options),
     });
-    resetPlanes({ ports, ...pick(['num_of_planes'], options) });
-  }, [cwDelay, chDelay]);
 
-  usePixiTicker(() => {
-    updatePorts({ planes, ...pick(['num_of_ports'], options) });
     updatePlanes({
       ...pick(['cw', 'ch', 'tick', 'dt', 'approachingDist'], vars),
       ports,
       ...pick(
         [
           'num_of_planes',
-          'plane_path_spacing',
+          'plane_path_modular_segment',
           'plane_path_max',
           'plane_holding_distance',
         ],
@@ -132,9 +143,9 @@ export const AirportContent = ({ cw, ch, options }) => {
             <Fragment key={`port-${i}`}>
               <PortGraphics
                 key={`port-graphics-${i}`}
-                {...pick(['cw', 'ch', 'et', 'portRadius'], vars)}
-                {...port}
-                {...pick(
+                vars={pick(['et', 'tick', 'portRadius'], vars)}
+                port={port}
+                options={pick(
                   ['port_capacity', 'port_color_full', 'port_color_norm'],
                   options
                 )}
@@ -142,12 +153,9 @@ export const AirportContent = ({ cw, ch, options }) => {
 
               <PortText
                 key={`port-text-${i}`}
-                text={`${port.approachingCount}`}
-                x={port.x}
-                y={port.y}
-                approachingCount={port.approachingCount}
-                portRadius={`${vars.portRadius}`}
-                {...pick(
+                vars={pick(['tick', 'portRadius'], vars)}
+                port={pick(['x', 'y', 'approachingCount'], port)}
+                options={pick(
                   ['port_capacity', 'text_color_full', 'text_color_norm'],
                   options
                 )}
@@ -161,9 +169,10 @@ export const AirportContent = ({ cw, ch, options }) => {
           planes.map((plane, i) => (
             <PlaneGraphics
               key={`plane-graphics-${i}`}
-              {...pick(['cw', 'ch', 'tick'], vars)}
-              {...plane}
-              {...pick(
+              index={i}
+              vars={pick(['tick'], vars)}
+              plane={plane}
+              options={pick(
                 [
                   'plane_unique_color',
                   'plane_holding_color',

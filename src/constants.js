@@ -1,7 +1,7 @@
 import { pound_hex_to_dec } from '@/lib/color';
 import { kebab_to_camel } from '@/lib/utils';
 
-export const DEFAULT_WORKER_PATH = './airport.worker.js';
+export const DEFAULT_WORKER_FILE_PATH = './airport.worker.js';
 
 export const DEFAULT_SIZE = {
   width: 800,
@@ -35,6 +35,9 @@ const DEFAULT_COLORS = {
   },
 };
 
+/**
+ * @returns [Object]
+ */
 export const colors = (orig =>
   Object.keys(orig).reduce((acc, key) => {
     const value = orig[key];
@@ -68,8 +71,8 @@ export const DEFAULT_AIRPORT_OPTIONS = {
 
   // AIRPLANES
   num_of_planes: 50,
-  plane_path_max: 100,
-  plane_path_spacing: 300,
+  plane_path_max: 15,
+  plane_path_modular_segment: 5,
   plane_holding_distance: 5,
   plane_holding_color: colors.gray600,
   plane_flight_color: COLOR_NORM,
@@ -83,7 +86,7 @@ export const DEFAULT_AIRPORT_OPTIONS = {
   text_color_full: COLOR_FULL,
 };
 
-const NEED_DECIMAL_CONVERSIONS = [
+const DECIMAL_CONVERSION_REQUIRED = [
   'background_color',
   'port_color_norm',
   'port_color_full',
@@ -94,18 +97,17 @@ const NEED_DECIMAL_CONVERSIONS = [
   'text_color',
 ];
 
-export const makeAirportOptions = (given = {}) => {
-  return Object.keys(DEFAULT_AIRPORT_OPTIONS).reduce((acc, key) => {
+export const makeAirportOptions = (given = {}) =>
+  Object.keys(DEFAULT_AIRPORT_OPTIONS).reduce((acc, key) => {
     const val = given[key] || DEFAULT_AIRPORT_OPTIONS[key];
     if (!val) {
       throw new Error(`[constants] No values for: ${key}`);
     }
-    acc[key] = NEED_DECIMAL_CONVERSIONS.includes(key)
+    acc[key] = DECIMAL_CONVERSION_REQUIRED.includes(key)
       ? pound_hex_to_dec(val)
       : val;
     return acc;
   }, {});
-};
 
 export const DEFAULT_STAGE_OPTIONS = {
   forceCanvas: true,

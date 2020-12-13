@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Stage } from 'react-pixi-fiber';
 
 import { int } from '@/lib/math';
-import { pound_hex_to_dec } from '@/lib/color';
 import {
-  DEFAULT_WORKER_PATH,
+  DEFAULT_WORKER_FILE_PATH,
   DEFAULT_SIZE,
   DEFAULT_AIRPORT_OPTIONS,
   DEFAULT_STAGE_OPTIONS,
@@ -13,38 +12,41 @@ import {
 
 import { AirportContent as Content } from './content';
 
-export const Widget = ({ config = {} }) => {
+export const Widget = ({ config: given }) => {
   const [worker, setWorker] = useState();
   const [stageOptions, setStageOptions] = useState(DEFAULT_STAGE_OPTIONS);
   const [airportOptions, setAirportOptions] = useState(DEFAULT_AIRPORT_OPTIONS);
 
   useEffect(() => {
-    const instance = new SharedWorker(config.worker_path || DEFAULT_WORKER_PATH);
-    setWorker(instance);
+    if (!worker) {
+      setWorker(
+        new SharedWorker(given.worker_file_path || DEFAULT_WORKER_FILE_PATH)
+      );
+    }
 
-    setAirportOptions(makeAirportOptions(config));
+    setAirportOptions(makeAirportOptions(given));
 
     setStageOptions({
       width: window.innerWidth * 0.65,
       height: window.innerHeight * 0.65,
     });
-
-    return () => {
-      instance.terminate();
-    };
   }, []);
 
   useEffect(() => {
     if (worker && worker.port) {
       worker.port.onmessage = (event = {}) => {
-        console.log(`[Airport] ++++ worker.port.onmessage`);
+        console.log('(widget) [index] ++++ onmessage()');
         const { data = {} } = event;
         const { action, payload } = data;
+
+        console.log('(widget) [index] action: ', action);
+
         if (action && action === 'resize' && payload) {
-          console.log(`[Airport] Message received: resize`);
           const { width, height } = payload;
+
+          console.log(`(widget) [index] ${int(width)}x${int(height)}`);
+
           if (width && height) {
-            console.log(`[Airport] ${int(width)}x${int(height)}`);
             setStageOptions({
               width,
               height,

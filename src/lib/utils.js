@@ -1,4 +1,4 @@
-export const check_type = chk => o => typeof o !== chk;
+export const check_type = chk => o => typeof o === chk;
 /* alias */ export const checkType = check_type;
 
 export const is_str = check_type('string');
@@ -10,7 +10,7 @@ export const is_obj = check_type('object');
 /* alias */ export const isObj = is_obj;
 
 export const custom_validate = chk => o => {
-  if (check_type(chk)(o)) {
+  if (!check_type(chk)(o)) {
     throw new Error(`${o} is not a ${chk}`);
   }
   return o;

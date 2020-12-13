@@ -42,7 +42,7 @@ So, I would say the demand is very limited,
 nonetheless, it should help someone out there.
 
 Instead of being *"installed"*, this one is to be *"embedded"* in other apps.  
-(or, you can totally call it from another React apps)
+(or, you can totally call it from another React apps. *[Example](#c--calling-from-other-react-apps)*)
 
 It exposes the widget *globally* (in our case `Airport`).  
 So, this is how it is done:
@@ -299,7 +299,7 @@ I have the following HTML for testing:
 
 <script type="text/javascript">
 Airport.app.init({
-  {WHATEVER THE CONFIG PARAMS I WANT TO PASS}
+  AIRPORT_RELATED_PARAMS_I WANT_TO_PASS
 }); 
 </script>
 
@@ -341,6 +341,8 @@ It is probably worth describing how the app work.
 
 If you are interested only in UMD library, you may stop reading.
 
+#### (a) Basic Entry
+
 So, the app starts when it renders React app into a designated DOM:
 
 `src/index.html`
@@ -369,6 +371,8 @@ By saying *"static"*, it means, React won't pick up the changes
 even when the starter change the content of the prop.  
 (that's why we need some tools like *SharedWorker*, or *Emitter* to allow messaging)
 
+#### (b) `react-pixi-fiber`
+
 Now, it is the `Widget` component which renders the actual content:
 
 `src/widget/index.jsx`
@@ -376,21 +380,22 @@ Now, it is the `Widget` component which renders the actual content:
 ```jsx
 import { AirportContent as Content } from './content';
 
-export const Widget = ({ config = {} }) => {
+export const Widget = ({ config: given }) => {
   const [worker, setWorker] = useState();
   const [stageOptions, setStageOptions] = useState(DEFAULT_STAGE_OPTIONS);
   const [airportOptions, setAirportOptions] = useState(DEFAULT_AIRPORT_OPTIONS);
 
   useEffect(() => {
-    setWorker(new SharedWorker('./airport.worker.js'));
-    setAirportOptions(makeAirportOptions(config));
+    if (!worker) {
+      setWorker(
+        new SharedWorker(given.worker_file_path || DEFAULT_WORKER_FILE_PATH)
+      );
+    }
+    setAirportOptions(makeAirportOptions(given));
     setStageOptions({
       width: window.innerWidth * 0.65,
       height: window.innerHeight * 0.65,
     });
-    return () => {
-      instance.terminate();
-    };
   }, []);
 
   useEffect(() => {
@@ -398,6 +403,7 @@ export const Widget = ({ config = {} }) => {
       worker.port.onmessage = (event = {}) => {
         const { data = {} } = event;
         const { action, payload } = data;
+
         if (action && action === 'resize' && payload) {
           const { width, height } = payload;
           if (width && height) {
@@ -421,6 +427,7 @@ export const Widget = ({ config = {} }) => {
       />
     </Stage>
   );
+};
 ```
 
 in the above, `<Stage>` is a component provided by `react-pixi-fiber`
@@ -451,6 +458,90 @@ From HTML, we can update the size of the widget.
 However, I regret now that I should have used *[Emitter](https://github.com/emitter-io/emitter)* instead...  
 It is ugly to output 2 bundles for a widget...
 
+
+#### (c) Calling from Other React Apps
+
+Instead of *embedding* the widget in HTML,
+and you want to call the widget from other React apps,
+here is an example from one of my working app:
+
+```jsx
+import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import tw, { css } from 'twin.macro';
+
+import { useDeviceSize } from '@/hooks/device';
+import { useDebounce } from '@/hooks/debounce';
+import { Layout } from '@/components/layout';
+
+const MIN_WIDTH = 580;
+const DEBOUNCE_MSEC = 1000;
+const WORKER_FILE_PATH = '/assets/airport.worker.js';
+
+const layoutStyles = {
+  header: tw`bg-black text-white`,
+  content: tw`bg-black text-white`,
+};
+
+const contentStyle = css`
+  min-height: 30vh;
+  ${tw`p-4 flex flex-col justify-start items-start`}
+`;
+
+export const AirportDemo = () => {
+  const { width: dw, height: dh } = useDeviceSize(null);
+  const { t } = useTranslation();
+  const [worker, setWorker] = useState();
+
+  const dwDelay = useDebounce(dw, DEBOUNCE_MSEC);
+  const dhDelay = useDebounce(dh, DEBOUNCE_MSEC);
+
+  const resize = () => {
+    let w = dw * 0.75;
+    if (w < MIN_WIDTH) {
+      w = MIN_WIDTH;
+    }
+    if (worker) {
+      worker.port.postMessage({
+        action: 'resize',
+        payload: {
+          width: w,
+          height: w * 0.85,
+        },
+      });
+    }
+  };
+
+  useEffect(() => {
+    Airport.app.init({ worker_file_path: WORKER_FILE_PATH });
+
+    if (!worker) {
+      // Set it only when don't have the worker to prevent from
+      // another port being created when it is already mounted.
+      setWorker(new SharedWorker(WORKER_FILE_PATH));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (worker && worker.port) {
+      resize();
+    }
+  }, [dwDelay, dhDelay, worker]);
+
+  return (
+    <Layout
+      page="airport"
+      title="Airport"
+      styles={layoutStyles}
+      hideCookieConsent
+    >
+      <div id="content" css={contentStyle}>
+        <div id="airport"></div>
+      </div>
+    </Layout>
+  );
+};
+```
 
 
 &nbsp;
