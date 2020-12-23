@@ -86,9 +86,6 @@ worker.port.postMessage({
 });
 ```
 
-However, to be honest, I should have used *[Emitter](https://github.com/emitter-io/emitter)* instead.  
-It is ugly as hell to output 2 files for 1 widget...
-
 &nbsp;
 
 ### # Issues
@@ -229,8 +226,8 @@ yarn serve
 
 ### 4-1. UMD Library
 
-Outputting UMD library is quite easy.  
-It's just that you often encouter issues when making it work with `babel`...
+Building UMD library is relatively easy.  
+It's just, we tend to bump into probelems when working with `babel`...
 
 `webpack.base.js`
 
@@ -247,12 +244,10 @@ It's just that you often encouter issues when making it work with `babel`...
   },
 ```
 
-In the above I have two entries, but this is not necessary.  
-Along with the main bundle,
-I just needed another bundle output for
-`SharedWorker` for messaging between the starter and the widget (to dynamically update props).
+I have 2 entries in the above, but you can only have 1.
+I need another for `SharedWorker` (for caller to send message to the widget).
 
-If you were to output only 1 bundle, you would do:
+To output only 1, you would do:
 
 ```js
   entry: './src/index.jsx',
@@ -372,7 +367,6 @@ export const init = config => {
 Here, the prop `config` is totally static, and it is given from whoever passes.  
 By saying *"static"*, it means, React won't pick up the changes
 even when the starter change the content of the prop.  
-(that's why we need some tools like *SharedWorker*, or *Emitter* to allow messaging)
 
 #### (b) `react-pixi-fiber`
 
@@ -458,9 +452,6 @@ Also, `Widget` refers to `airport.worker.js`.
 ```
 
 From HTML, we can update the size of the widget.
-
-However, I regret now that I should have used *[Emitter](https://github.com/emitter-io/emitter)* instead...  
-It is ugly to output 2 bundles for a widget...
 
 
 #### (c) Calling from Other React Apps

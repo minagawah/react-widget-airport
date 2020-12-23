@@ -8,10 +8,10 @@ const base = require('./webpack.base.js');
 
 module.exports = merge(base, {
   mode: 'production',
-  plugins: [new LicenseWebpackPlugin()],
   optimization: {
     minimize: true,
   },
+  plugins: [new LicenseWebpackPlugin()],
   performance: {
     // Exceeds the max size...
     // Default: 244 KiB
