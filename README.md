@@ -3,21 +3,21 @@
 A React widget for Airport animations with flight departures/arrivials.
 
 [1. About](#1-about)  
-[2. What I Did](#3-what-i-did)  
-&nbsp; &nbsp; [2-1. Installed NPM Packages All](#2-1-installed-npm-packages-all)  
-&nbsp; &nbsp; [2-2. Babel](#2-2-babal)  
-&nbsp; &nbsp; [2-3. Webpack](#2-3-webpack)  
-&nbsp; &nbsp; [2-4. Loaders](#2-4-loaders)  
-&nbsp; &nbsp; [2-5. Other Build Tools](#2-5-other-build-tools)  
-&nbsp; &nbsp; [2-6. React](#2-6-react)  
-&nbsp; &nbsp; [2-7. Other Dependencies](#2-8-other-dependencies)  
-[3. Build + Serve](#3-build--serve)  
-[4. How It Works](#4-how-it-works)  
-&nbsp; &nbsp; [4-1. UMD Library](#4-1-umd-library)  
-&nbsp; &nbsp; [4-2. App Structure](#4-2-app-structure)  
+[2. How It Works](#2-how-it-works)  
+&nbsp; &nbsp; [2-1. UMD Library](#2-1-umd-library)  
+&nbsp; &nbsp; [2-2. App Structure](#2-2-app-structure)  
 &nbsp; &nbsp; &nbsp; &nbsp; [(a) Basic Entry](#a-basic-entry)  
 &nbsp; &nbsp; &nbsp; &nbsp; [(b) react-pixi-fiber](#b-react-pixi-fiber)  
 &nbsp; &nbsp; &nbsp; &nbsp; [(c) Calling from Other React Apps](#c-calling-from-other-react-apps)  
+[3. What I Did](#3-what-i-did)  
+&nbsp; &nbsp; [3-1. Installed NPM Packages All](#3-1-installed-npm-packages-all)  
+&nbsp; &nbsp; [3-2. Babel](#3-2-babal)  
+&nbsp; &nbsp; [3-3. Webpack](#3-3-webpack)  
+&nbsp; &nbsp; [3-4. Loaders](#3-4-loaders)  
+&nbsp; &nbsp; [3-5. Other Build Tools](#3-5-other-build-tools)  
+&nbsp; &nbsp; [3-6. React](#3-6-react)  
+&nbsp; &nbsp; [3-7. Other Dependencies](#3-8-other-dependencies)  
+[4. Build + Serve](#4-build--serve)  
 [5. Notes](#5-notes)  
 &nbsp; &nbsp; [5-1. Module Exports Issues](#5-1-module-exports-issues)  
 &nbsp; &nbsp; [5-2. `webpack-dev-server`](#5-2-webpack-dev-server)  
@@ -37,18 +37,19 @@ A React widget for Airport animations with flight departures/arrivials.
 
 #### Embedded React Widget
 
-It attempts to show how you can bundle your React app into a widget (UMD library).
-I could have made it installed as a dependency for other repos,
-and as a matter of fact, that would be rather a popular approach,
-or has more demands when component *reuse* is the concern.
-So, I would say the demand is very limited,
-nonetheless, it should help someone out there.
+This is an attempt to show how you can bundle your React app into a widget (UMD library).
+I could have made it installed as a dependency for other repos.
+As a matter of fact, that is rather a popular approach,
+or has more demands when component *reuse* were the concern.
+Thus, I would say the demand is very limited.  
+Nonetheless, it should help someone out there.
 
-Instead of being *"installed"*, this one is to be *"embedded"* in other apps.  
-(or, you can totally call it from another React apps. *[Example](#c-calling-from-other-react-apps)*)
+Instead of being **installed**, this app is to be **embedded** in other apps.  
+(or, you can totally call it from another React apps.
+*[See Example](#c-calling-from-other-react-apps)*)
 
-It exposes the widget *globally* (in our case `Airport`).  
-So, this is how it is done:
+It exposes the widget globally (in our case `Airport`).  
+So, this is how embedding is done:
 
 ```html
 <script type="text/javascript" src="./airport.app.js"></script>
@@ -58,21 +59,22 @@ Airport.app.init();
 </script>
 ```
 
-#### react-pixi-fiber
+#### React Pixi Fiber
 
-As an example, I also implemented a canvas animation using
-[reac-pixi-fiber](https://github.com/michalochman/react-pixi-fiber).
-Unlike [react-pixi](https://github.com/inlet/react-pixi),
-it is a bit tricky, so I hope it helps someone as well.
+It also demonstrates implementing a canvas animation using
+[reac-pixi-fiber](https://github.com/michalochman/react-pixi-fiber).  
+Compared to [react-pixi](https://github.com/inlet/react-pixi),
+it's a bit tricky to implement...  
+So, I hope it helps someone as well.
 
 
 #### SharedWorker
 
-Also, it outputs another bundle file for
-*[SharedWorker](https://developer.mozilla.org/en-US/docs/Web/API/SharedWorker)*
-which allows messaging between the caller and the widget.
+As you can see, it outputs 2 bundle files (it is not necessary).
+One of them is for [SharedWorker](https://developer.mozilla.org/en-US/docs/Web/API/SharedWorker),
+and it allows the caller of the widget to send messages to the widget.
 
-Basically, your app (caller for the widget) can send a message:
+Here is how a caller can send messages to its widget:
 
 ```js
 const worker = new SharedWorker('./airport.worker.js');
@@ -90,144 +92,27 @@ worker.port.postMessage({
 
 ### # Issues
 
-Yeah. We all fail, right?
+Yeah. I have some issues. We all fail, right?
 
-- It builds fine, but does not work for `webpack-dev-server` ([see notes](#5-2-webpack-dev-server)).
+- It builds fine, but I could not get `webpack-dev-server` working ([see notes](#5-2-webpack-dev-server)).
 - `twin.macro` (Emotion & Tailwind) returns an empty object at runtime ([see notes](#5-3-emotion--tailwind)).
 - Externalizing `react`, `react-dom`, `pixi`, `react-pixi`, and `react-pixi-fiber` failed.
+[This is how I usually handle externals](https://github.com/minagawah/react-widget-airport/blob/main/webpack.base.js#L18),
+but it does not work for UMD...
+When I attempt to download the libraries in HTML, both React and Pixi seem to have problems specific to each...
+Please help me out!
 
 &nbsp;
 
 
 
-## 2. What I Did
+## 2. How It Works
 
 
-### 2-1. Installed NPM Packages All
+### 2-1. UMD Library
 
-
-```
-yarn add ramda react react-dom pixi.js pixi.js-legacy react-pixi-fiber@1.0.0-beta.4
-
-yarn add --dev @babel/core @babel/preset-env @babel/preset-react @babel/cli core-js@3 @babel/runtime-corejs3 babel-loader file-loader style-loader css-loader postcss-loader webpack webpack-cli webpack-merge clean-webpack-plugin html-webpack-plugin license-webpack-plugin autoprefixer prettier http-server
-```
-
-
-### 2-2. Babel
-
-For `@babel/polyfill` has been deprecated, we use `core-js`.
-
-- @babel/core
-- @babel/preset-env
-- @babel/cli
-- core-js@3
-- @babel/runtime-corejs3
-
-```
-yarn add --dev @babel/core @babel/preset-env @babel/cli core-js@3 @babel/runtime-corejs3
-```
-
-
-### 2-3. Webpack
-
-- webpack
-- webpack-cli
-
-```
-yarn add --dev webpack webpack-cli
-```
-
-### 2-4. Loaders
-
-- babel-loader
-- file-loader
-- style-loader
-- css-loader
-- postcss-loader
-
-```
-yarn add --dev babel-loader file-loader style-loader css-loader postcss-loader
-```
-
-
-### 2-5. Other Build Tools
-
-- webpack-merge
-- clean-webpack-plugin
-- html-webpack-plugin (only for testing)
-- license-webpack-plugin
-- autoprefixer
-- prettier
-
-```
-yarn add --dev webpack-merge clean-webpack-plugin html-webpack-plugin license-webpack-plugin autoprefixer prettier
-```
-
-### 2-6. React
-
-- @babel/preset-react
-- react
-- react-dom
-
-```
-yarn add react react-dom
-
-yarn add --dev @babel/preset-react
-```
-
-### 2-7. Other Dependencies
-
-- ramda
-- pixi.js
-- pixi.js-legacy
-- react-pixi-fiber@1.0.0-beta.4 ([issue](https://github.com/michalochman/react-pixi-fiber/issues/156#issuecomment-578214553))
-- http-server
-
-```
-yarn add ramda pixi.js pixi.js-legacy react-pixi-fiber@1.0.0-beta.4
-
-yarn add --dev http-server
-```
-
-&nbsp;
-
-
-
-## 3. Build & Serve
-
-### Build for DEV
-
-```
-yarn build:dev
-```
-
-### Serve from `localhost:8000`
-
-```
-yarn serve
-```
-
-Note: `chrome://inspect/#workers` to inspect running workers.
-
-
-### Build for PROD
-
-```
-yarn serve
-```
-
-&nbsp;
-
-
-
-
-## 4. How It Works
-
-
-### 4-1. UMD Library
-
-Building UMD library is relatively easy.  
-It's just, we tend to bump into probelems when working with `babel`...
+Building an UMD library is relatively easy.  
+It's just that we frequently bump into problems when working with `babel`...
 
 `webpack.base.js`
 
@@ -244,8 +129,9 @@ It's just, we tend to bump into probelems when working with `babel`...
   },
 ```
 
-I have 2 entries in the above, but you can only have 1.
-I need another for `SharedWorker` (for caller to send message to the widget).
+I have 2 entries in the above, but you can only have 1.  
+I have 2 because one of them is for `SharedWorker`,
+and it has to be an independent file.
 
 To output only 1, you would do:
 
@@ -259,8 +145,8 @@ To output only 1, you would do:
   },
 ```
 
-`[hash]` is not necessary neither.
-I have it because I did not want to *"hard reload browsers"* when testing.
+`[hash]` isn't needed either.  
+I am adding `[hash]` so that I don't have to hard reload browsers when making changes.
 
 Now, back to UMD library.
 
@@ -333,7 +219,7 @@ Simple is that.
 
 
 
-### 4-2. App Structure
+### 2-2. App Structure
 
 It is probably worth describing how the app work.
 
@@ -456,9 +342,9 @@ From HTML, we can update the size of the widget.
 
 #### (c) Calling from Other React Apps
 
-Instead of *embedding* the widget in HTML,
-and you want to call the widget from other React apps,
-here is an example from one of my working app:
+So, instead of embedding the widget in HTML pages,
+you want to call it from other React apps?  
+Here is an example from one of my working apps:
 
 ```jsx
 import React, { useState, useEffect } from 'react';
@@ -524,12 +410,7 @@ export const AirportDemo = () => {
   }, [dwDelay, dhDelay, worker]);
 
   return (
-    <Layout
-      page="airport"
-      title="Airport"
-      styles={layoutStyles}
-      hideCookieConsent
-    >
+    <Layout styles={layoutStyles}>
       <div id="content" css={contentStyle}>
         <div id="airport"></div>
       </div>
@@ -540,6 +421,164 @@ export const AirportDemo = () => {
 
 
 &nbsp;
+
+
+
+## 3. What I Did
+
+
+### 3-1. Installed NPM Packages All
+
+
+```
+yarn add ramda react react-dom pixi.js pixi.js-legacy react-pixi-fiber@1.0.0-beta.4
+
+yarn add --dev @babel/core @babel/preset-env @babel/preset-react @babel/cli core-js@3 @babel/runtime-corejs3 babel-loader file-loader style-loader css-loader postcss-loader webpack webpack-cli webpack-merge clean-webpack-plugin html-webpack-plugin license-webpack-plugin autoprefixer prettier http-server
+```
+
+
+### 3-2. Babel
+
+For `@babel/polyfill` has been deprecated, we use `core-js`.
+
+- @babel/core
+- @babel/preset-env
+- @babel/cli
+- core-js@3
+- @babel/runtime-corejs3
+
+```
+yarn add --dev @babel/core @babel/preset-env @babel/cli core-js@3 @babel/runtime-corejs3
+```
+
+
+### 3-3. Webpack
+
+- webpack
+- webpack-cli
+
+```
+yarn add --dev webpack webpack-cli
+```
+
+### 3-4. Loaders
+
+- babel-loader
+- file-loader
+- style-loader
+- css-loader
+- postcss-loader
+
+```
+yarn add --dev babel-loader file-loader style-loader css-loader postcss-loader
+```
+
+
+### 3-5. Other Build Tools
+
+- webpack-merge
+- clean-webpack-plugin
+- html-webpack-plugin (only for testing)
+- license-webpack-plugin
+- autoprefixer
+- prettier
+
+```
+yarn add --dev webpack-merge clean-webpack-plugin html-webpack-plugin license-webpack-plugin autoprefixer prettier
+```
+
+### 3-6. React
+
+- @babel/preset-react
+- react
+- react-dom
+
+```
+yarn add react react-dom
+
+yarn add --dev @babel/preset-react
+```
+
+### 3-7. Other Dependencies
+
+- ramda
+- pixi.js
+- pixi.js-legacy
+- react-pixi-fiber@1.0.0-beta.4 ([issue](https://github.com/michalochman/react-pixi-fiber/issues/156#issuecomment-578214553))
+- http-server
+
+```
+yarn add ramda pixi.js pixi.js-legacy react-pixi-fiber@1.0.0-beta.4
+
+yarn add --dev http-server
+```
+
+Some browsers do not support WebGL the way Pixi v5 wants,
+and must fallback to canvas rendering.
+There, we need `pixi.js-legacy` instead.  
+There are several ways to handle this,
+but I found
+[a neat solution](https://github.com/inlet/react-pixi/issues/126#issuecomment-514184770),
+and this is what I do in this project.  
+The idea is to export both `pixi.js` and `pixi.js-legacy` in the codebase,
+and use aliases to internally handle names.  
+Whenever looking up `pixi.js`, it refers to `src/lib/pixi.js`:
+
+**# webpack.base.js**
+
+```js
+  resolve: {
+    extensions: ['.js', '.jsx'],
+    alias: {
+      'pixi.js': path.resolve(__dirname, 'src/lib/pixi.js'),
+      'pixi.js-stable': path.resolve(__dirname, 'node_modules/pixi.js'),
+      'react-pixi$': 'react-pixi-fiber/react-pixi-alias',
+      '@': path.join(__dirname, 'src'),
+    },
+  },
+```
+
+**# src/lib/pixi.js**
+
+```js
+export * from 'pixi.js-stable';
+export * from 'pixi.js-legacy';
+```
+
+where `pixi.js-stable` is a newly defined alias to the original `pixi.js`.
+
+
+&nbsp;
+
+
+
+## 4. Build & Serve
+
+### Build for DEV
+
+```
+yarn build:dev
+```
+
+Note: `chrome://inspect/#workers` to inspect running workers.
+
+
+### Build for PROD
+
+```
+yarn serve
+```
+
+### Serve from: localhost:8000
+
+```
+yarn serve
+```
+
+
+&nbsp;
+
+
 
 
 
