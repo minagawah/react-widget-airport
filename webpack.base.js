@@ -11,7 +11,7 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'airport.[name].js?[hash]',
+    filename: 'airport.[name].js?[fullhash]',
     library: ['Airport', '[name]'],
     libraryTarget: 'umd',
   },

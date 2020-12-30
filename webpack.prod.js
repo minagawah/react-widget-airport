@@ -11,7 +11,7 @@ module.exports = merge(base, {
   optimization: {
     minimize: true,
   },
-  plugins: [new LicenseWebpackPlugin()],
+  plugins: [new LicenseWebpackPlugin({ perChunkOutput: false })],
   performance: {
     // Exceeds the max size...
     // Default: 244 KiB

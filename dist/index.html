@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="/assets/favicon.ico">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Airport</title>
+</head>
+<body style="margin: 0;">
+  <noscript>
+    <strong>We're sorry but the app doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+  </noscript>
+
+  <div id="airport"></div>
+
+  <!--
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/core-js/3.8.0/minified.min.js"></script>
+<script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.4.5/pixi.min.js"></script>
+<script crossorigin src="https://cdn.jsdelivr.net/npm/react-pixi-fiber@1.0.0-beta.4/umd/react-pixi-alias.production.min.js"></script>
+  -->
+
+<script type="text/javascript" src="airport.app.js?a4f75a9d2481747befd1"></script>
+
+<script type="text/javascript">
+const HASH = 'f15c18e70a60aed7dcfe';
+const WORKER_FILE_PATH = `./airport.worker.js?${HASH}`;
+
+const GRAY_300 = '#e2e2e2';
+const COLOR_NORM = '#19f7ff';
+const COLOR_FULL = '#de3d00';
+
+Airport.app.init({
+  // width: 800,
+  // height: 600,
+  // num_of_ports: 5,
+  // port_capacity: 5,
+  // port_color_norm: COLOR_NORM,
+  // port_color_full: COLOR_FULL,
+  // num_of_planes: 50,
+  // plane_path_max: 20,
+  // plane_path_modular_segment: 5,
+  // plane_holding_distance: 5,
+  // plane_holding_color: '#707070',
+  // plane_flight_color: COLOR_NORM,
+  // plane_unique_color: '#de3d00',
+  // plane_path_color: GRAY_300,
+  // text_color: GRAY_300,
+  // text_color_norm: COLOR_NORM,
+  // text_color_full: COLOR_FULL,
+  // worker_file_path: WORKER_FILE_PATH,
+}); 
+
+const worker = new SharedWorker(WORKER_FILE_PATH);
+
+setTimeout(() => {
+  worker.port.postMessage({
+    action: 'resize',
+    payload: {
+      width: window.innerWidth,
+      height: window.innerHeight,
+    },
+  });
+}, 1000);
+
+</script>
+
+</body>
+</html>

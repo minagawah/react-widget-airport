@@ -167,9 +167,16 @@ As you can see, it only exports `init` function using `export`.
 If you want to use `export default`,
 then *[you need a special setup for babel](#5-1-module-exports-issues)*.
 
-The module is now exposed *globally* as `Airport`.
+The module is now exposed globally as `Airport`.
 
-I have the following HTML for testing:
+When you want to utilize the widget,
+you download the following files,
+and embed them in your static HTML page:
+
+- [airport.app.js](dist/airport.app.js) (769 KB)
+- [airport.worker.js](dist/airport.worker.js) (114 KB)
+
+For this project, I am using `html-webpack-plugin` to generate a test page:
 
 `src/index.html`
 
@@ -337,7 +344,11 @@ Also, `Widget` refers to `airport.worker.js`.
   setWorker(new SharedWorker('./airport.worker.js'));
 ```
 
-From HTML, we can update the size of the widget.
+You can now use this worker to update the size of the widget
+from the page you embed the widget
+(and I already described how).
+
+&nbsp;
 
 
 #### (c) Calling from Other React Apps
@@ -419,7 +430,6 @@ export const AirportDemo = () => {
 };
 ```
 
-
 &nbsp;
 
 
@@ -498,6 +508,18 @@ yarn add react react-dom
 
 yarn add --dev @babel/preset-react
 ```
+
+I have another project using
+[preact](https://github.com/preactjs/preact)
+to minimize the size of the bundled files.
+I manated to work alright
+(although I need `babel-plugin-transform-react-jsx` for `h` pragma)
+for that project.  
+However, I found out it does not work with this Airport widget
+because `react-pixi-fiber` requires
+*reconciliation* which is only available for React v16A+.
+
+&nbsp;
 
 ### 3-7. Other Dependencies
 
