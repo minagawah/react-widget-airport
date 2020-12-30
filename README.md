@@ -22,7 +22,8 @@ A React widget for Airport animations with flight departures/arrivials.
 &nbsp; &nbsp; [5-1. Module Exports Issues](#5-1-module-exports-issues)  
 &nbsp; &nbsp; [5-2. `webpack-dev-server`](#5-2-webpack-dev-server)  
 &nbsp; &nbsp; [5-3. Emotion & Tailwind](#5-3-emotion--tailwind)  
-&nbsp; &nbsp; [5-4. APIPlugin: Using the Webpack hash](#5-4-apiplugin--using-the-webpack-hash)  
+&nbsp; &nbsp; [5-4. APIPlugin: Using the Webpack hash](#5-4-apiplugin--using-the-webpack-hash) &nbsp; &nbsp; [5-5. Preact](#5-5-preact)  
+ 
 [6. LICENSE](#6-license)  
 
 
@@ -63,17 +64,23 @@ Airport.app.init();
 
 It also demonstrates implementing a canvas animation using
 [reac-pixi-fiber](https://github.com/michalochman/react-pixi-fiber).  
-Compared to [react-pixi](https://github.com/inlet/react-pixi),
-it's a bit tricky to implement...  
-So, I hope it helps someone as well.
+Compared to [izzimach/react-pixi](https://github.com/Izzimach/react-pixi),
+it is a bit tricky to implement, and I hope it helps someone as well.
+
+Note #1: Another option is to use
+[inlet/react-pixi](https://github.com/inlet/react-pixi),
+but I had never tried.
+See *[the problem](https://github.com/inlet/react-pixi/issues/5)* they have.  
+Note #2: Note that `reac-pixi-fiber` does *not* work with `preact`
+(See: *[Why](#3-6-react)* or *[Using Preact](#5-5-preact)*).
 
 
 #### SharedWorker
 
 As you can see, it outputs 2 bundle files (it is not necessary).
-One of them is for [SharedWorker](https://developer.mozilla.org/en-US/docs/Web/API/SharedWorker),
-and it allows the caller of the widget to send messages to the widget.
-
+One of them is for
+*[SharedWorker](https://developer.mozilla.org/en-US/docs/Web/API/SharedWorker),*
+and it allows the caller of the widget to send messages to the widget.  
 Here is how a caller can send messages to its widget:
 
 ```js
@@ -169,14 +176,15 @@ then *[you need a special setup for babel](#5-1-module-exports-issues)*.
 
 The module is now exposed globally as `Airport`.
 
-When you want to utilize the widget,
-you download the following files,
-and embed them in your static HTML page:
+When people want to utilize the widget,
+they would download files from `dist` directory,
+and embed them in their HTML pages:
 
 - [airport.app.js](dist/airport.app.js) (769 KB)
 - [airport.worker.js](dist/airport.worker.js) (114 KB)
 
-For this project, I am using `html-webpack-plugin` to generate a test page:
+For this project, I am using `html-webpack-plugin` to generate a static page,
+so that I can test the widget.
 
 `src/index.html`
 
@@ -509,15 +517,17 @@ yarn add react react-dom
 yarn add --dev @babel/preset-react
 ```
 
-I have another project using
-[preact](https://github.com/preactjs/preact)
-to minimize the size of the bundled files.
+I have another project, and it uses
+[preact](https://github.com/preactjs/preact),
+for the size matters.  
 I manated to work alright
-(although I need `babel-plugin-transform-react-jsx` for `h` pragma)
-for that project.  
-However, I found out it does not work with this Airport widget
+(although I need `babel-plugin-transform-react-jsx` for "h" pragma)
+for that one.  
+However, it did not work with this Airport widget
 because `react-pixi-fiber` requires
-*reconciliation* which is only available for React v16A+.
+*reconciliation* which is available for React version 16 and up.
+
+See *[5-5. Preact](#5-5-preact)* if you are planning to use `preact`.
 
 &nbsp;
 
@@ -764,6 +774,60 @@ and it allows you to use the hash:
 const worker = new SharedWorker(`./my_worker.js?{__webpack_hash__}`)
 ```
 
+
+&nbsp;
+
+### 5-5. Preact
+
+If you are are planning to use
+[preact](https://github.com/preactjs/preact),
+you need the followings:
+
+**# Step (1): Using Preact**
+
+For every JSX files, you need to import "h" from `preact`:
+
+```js
+import { h } from 'preact';
+import { useState, useEffect } from 'preact/hooks';
+```
+
+**# Step (2): babel-plugin-transform-react-jsx**
+
+You need to handle "h" pragma with `babel-plugin-transform-react-jsx`.
+
+```
+yarn add --dev babel-plugin-transform-react-jsx
+```
+
+`.babelrc`
+
+```
+  plugins: [
+    ['@babel/transform-react-jsx', { pragma: 'h' }]
+  ]
+```
+
+**# Step (3): React + ReactDOM**
+
+While it works perfectly fine with (1) and (2) only,
+but your external React libraries
+are importing `react` and `react-dom`,
+and you need resolutions for the name.
+
+`webpack.base.js`
+
+```js
+  resolve: {
+    ...
+    alias: {
+      ...
+      ...
+      'react': 'preact/compat',
+      'react-dom': 'preact/compat',
+    }
+  }
+```
 
 &nbsp;
 
