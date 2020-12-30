@@ -218,16 +218,13 @@ is replaced with:
 /airport.app.js?[WHATEVER_THE_HASH_GENERATED]
 ```
 
-Two things to note about the above HTML file.
-
+Two things to note about the above HTML file.  
 First of all, we have the HTML only for a *testing* reason.  
-
 Secondly, I could have statically served HTML file.
 Instead, I use `html-webpack-plugin` to output to `dist`
 because I simply want to append a hash to the file,
-so that I don't have to reload hard.
-
-When you want to output UMD library, you don't need an HTML file.
+so that I don't have to reload hard.  
+When you want to output UMD library, you don't need an HTML file.  
 Simple is that.
 
 &nbsp;
@@ -236,8 +233,7 @@ Simple is that.
 
 ### 2-2. App Structure
 
-It is probably worth describing how the app work.
-
+It is probably worth describing how the app work.  
 If you are interested only in UMD library, you may stop reading.
 
 #### (a) Basic Entry
@@ -265,8 +261,8 @@ export const init = config => {
 };
 ```
 
-Here, the prop `config` is totally static, and it is given from whoever passes.  
-By saying *"static"*, it means, React won't pick up the changes
+Here, the prop `config` is *static*, and it is given from whoever passes.  
+By saying *static*, it means, React will ***not*** pick up the changes
 even when the starter change the content of the prop.  
 
 #### (b) `react-pixi-fiber`
