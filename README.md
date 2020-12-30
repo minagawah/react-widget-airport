@@ -605,7 +605,7 @@ yarn start
 Builds under: [/dist](dist)
 
 ```
-yarn serve
+yarn build
 ```
 
 ### http-server (to serve the built files)
