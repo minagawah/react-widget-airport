@@ -17,12 +17,12 @@ A React widget for Airport animations with flight departures/arrivials.
 &nbsp; &nbsp; [3-5. Other Build Tools](#3-5-other-build-tools)  
 &nbsp; &nbsp; [3-6. React](#3-6-react)  
 &nbsp; &nbsp; [3-7. Other Dependencies](#3-8-other-dependencies)  
-[4. Build + Serve](#4-build--serve)  
+[4. Dev + Build](#4-dev--build)  
 [5. Notes](#5-notes)  
 &nbsp; &nbsp; [5-1. Module Exports Issues](#5-1-module-exports-issues)  
-&nbsp; &nbsp; [5-2. `webpack-dev-server`](#5-2-webpack-dev-server)  
-&nbsp; &nbsp; [5-3. Emotion & Tailwind](#5-3-emotion--tailwind)  
-&nbsp; &nbsp; [5-4. APIPlugin: Using the Webpack hash](#5-4-apiplugin--using-the-webpack-hash) &nbsp; &nbsp; [5-5. Preact](#5-5-preact)  
+&nbsp; &nbsp; [5-2. Emotion & Tailwind](#5-2-emotion--tailwind)  
+&nbsp; &nbsp; [5-3. APIPlugin: Using the Webpack hash](#5-3-apiplugin--using-the-webpack-hash)  
+&nbsp; &nbsp; [5-4. Preact](#5-4-preact)  
  
 [6. LICENSE](#6-license)  
 
@@ -101,7 +101,6 @@ worker.port.postMessage({
 
 Yeah. I have some issues. We all fail, right?
 
-- It builds fine, but I could not get `webpack-dev-server` working ([see notes](#5-2-webpack-dev-server)).
 - `twin.macro` (Emotion & Tailwind) returns an empty object at runtime ([see notes](#5-3-emotion--tailwind)).
 - Externalizing `react`, `react-dom`, `pixi`, `react-pixi`, and `react-pixi-fiber` failed.
 [This is how I usually handle externals](https://github.com/minagawah/react-widget-airport/blob/main/webpack.base.js#L18),
@@ -180,8 +179,8 @@ When people want to utilize the widget,
 they would download files from `dist` directory,
 and embed them in their HTML pages:
 
-- [airport.app.js](dist/airport.app.js) (769 KB)
-- [airport.worker.js](dist/airport.worker.js) (114 KB)
+- [airport.app.js](dist/airport.app.js) (683 KB)
+- [airport.worker.js](dist/airport.worker.js) (15 KB)
 
 For this project, I am using `html-webpack-plugin` to generate a static page,
 so that I can test the widget.
@@ -447,7 +446,7 @@ export const AirportDemo = () => {
 ```
 yarn add ramda react react-dom pixi.js pixi.js-legacy react-pixi-fiber@1.0.0-beta.4
 
-yarn add --dev @babel/core @babel/preset-env @babel/preset-react @babel/cli core-js@3 @babel/runtime-corejs3 babel-loader file-loader style-loader css-loader postcss-loader webpack webpack-cli webpack-merge clean-webpack-plugin html-webpack-plugin license-webpack-plugin autoprefixer prettier http-server
+yarn add --dev @babel/core @babel/preset-env @babel/preset-react @babel/cli core-js@3 @babel/runtime-corejs3 babel-loader file-loader style-loader css-loader postcss-loader webpack webpack-cli webpack-merge webpack-dev-server@4.0.0-beta.0 clean-webpack-plugin html-webpack-plugin license-webpack-plugin autoprefixer prettier http-server
 ```
 
 
@@ -491,6 +490,7 @@ yarn add --dev babel-loader file-loader style-loader css-loader postcss-loader
 ### 3-5. Other Build Tools
 
 - webpack-merge
+- webpack-dev-server@4.0.0-beta.0
 - clean-webpack-plugin
 - html-webpack-plugin (only for testing)
 - license-webpack-plugin
@@ -498,8 +498,15 @@ yarn add --dev babel-loader file-loader style-loader css-loader postcss-loader
 - prettier
 
 ```
-yarn add --dev webpack-merge clean-webpack-plugin html-webpack-plugin license-webpack-plugin autoprefixer prettier
+yarn add --dev webpack-merge webpack-dev-server@4.0.0-beta.0 clean-webpack-plugin html-webpack-plugin license-webpack-plugin autoprefixer prettier
 ```
+
+When using `webpack-dev-server`, the bundle library exports empty object.
+For our project, specifically, `Airport.app` becomes `{}`.
+This is is a bug, and is fixed in `webpack-dev-server@4.0.0-beta.0`
+(See
+*[solution](https://github.com/webpack/webpack-dev-server/issues/2484#issuecomment-749497713)*).
+
 
 ### 3-6. React
 
@@ -580,24 +587,28 @@ where `pixi.js-stable` is a newly defined alias to the original `pixi.js`.
 
 
 
-## 4. Build & Serve
-
-### Build for DEV
-
-```
-yarn build:dev
-```
+## 4. Dev + Build
 
 Note: `chrome://inspect/#workers` to inspect running workers.
 
 
-### Build for PROD
+### DEV
+
+Served at [localhost:8080](http://localhost:8080)
+
+```
+yarn start
+```
+
+### PROD
+
+Builds under: [/dist](dist)
 
 ```
 yarn serve
 ```
 
-### Serve from: localhost:8000
+### http-server (to serve the built files)
 
 ```
 yarn serve
@@ -624,14 +635,7 @@ Here is a list of plugins you may want to dig in:
 - babel-plugin-add-module-exports
 
 
-### 5-2. `webpack-dev-server`
-
-A bundle works for production, but it fails when using `webpack-dev-server`.  
-With `writeToDisk: true` option, although we can read a physical output, it still does not work.  
-It loads the library fine, *but exported module becomes an empty object...*
-
-
-### 5-3. Emotion & Tailwind
+### 5-2. Emotion & Tailwind
 
 Attempt to use `twin.macro` (Twin) for Emotion and Tailwind fails.
 
@@ -728,7 +732,7 @@ module.exports = {
 ```
 
 
-### 5-4. APIPlugin: Using the Webpack hash
+### 5-3. APIPlugin: Using the Webpack hash
 
 This is a personal note.
 For `airport.app.js`, we have a Webpack hash added.
@@ -773,7 +777,7 @@ const worker = new SharedWorker(`./my_worker.js?{__webpack_hash__}`)
 
 &nbsp;
 
-### 5-5. Preact
+### 5-4. Preact
 
 If you are are planning to use
 [preact](https://github.com/preactjs/preact),

@@ -1,6 +1,3 @@
-// See: https://github.com/babel/babel/issues/9853#issuecomment-619587386
-import 'core-js';
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 

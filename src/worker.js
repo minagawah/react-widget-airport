@@ -1,5 +1,3 @@
-import 'core-js';
-
 const arr = [];
 
 onconnect = (e = {}) => {
