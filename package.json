@@ -3,7 +3,7 @@
   "version": "0.1.10",
   "private": false,
   "description": "A React widget for Airport animations with flight departures/arrivials.",
-  "main": "dist/airport.js",
+  "main": "dist/airport.app.js",
   "scripts": {
     "pretty": "$npm_execpath prettier -w \"**/*.(js|jsx)\"",
     "build:dev": "$npm_execpath webpack --config webpack.dev.js",
