@@ -20,6 +20,7 @@ export const PortGraphics = CustomPIXIComponent(
     customDisplayObject: props => new PIXI.Graphics(),
     customApplyProps: function (g, oldProps, newProps) {
       const {
+        uid,
         vars: { et, tick, portRadius },
         port: { x, y, approachingCount, colorIndex },
         options: { port_capacity, port_color_full, port_color_norm },
@@ -90,25 +91,27 @@ const enoughSpace = ({ minDist, x, y, ch, ports }) => {
 };
 
 export const usePorts = () => {
+  const [portsUID, setPortsUID] = useState(null);
   const [ports, setPorts] = useState([]);
 
-  const resetPorts = ({ cw, ch, portSpacingDist, num_of_ports }) => {
+  const resetPorts = ({ tick, cw, ch, portSpacingDist, num_of_ports }) => {
     console.log('(widget) [port] RESET --> PORTS');
 
     setPorts([]);
+    setPortsUID(tick);
 
     if (cw && ch) {
       const _ports = [];
 
-      const generate = () => {
+      const generate = index => {
         let x = 0;
         let y = 0;
 
         if (cw && ch) {
-          let stopper = 0;
           const min = cw * 0.1;
           const maxY = ch * 0.92;
           let max = cw * 0.9;
+          let stopper = 0;
 
           // TODO: Limits the X max...
           if (max > maxY) {
@@ -116,6 +119,7 @@ export const usePorts = () => {
           }
 
           ({ x, y } = generatePos(min, max));
+
           while (
             !enoughSpace({ x, y, minDist: portSpacingDist, ch, ports: _ports })
           ) {
@@ -131,6 +135,7 @@ export const usePorts = () => {
         }
 
         return {
+          uid: `${tick}-${index}`,
           x,
           y,
           approachingCount: 0,
@@ -138,10 +143,12 @@ export const usePorts = () => {
         };
       };
 
-      // console.log('(widget) [port] ports:');
+      console.log('(widget) [port] ports:');
+
       for (let i = 0; i < num_of_ports; i++) {
-        const p = generate();
-        // console.log(`(widget) [port] port[${i}] (${int(p.x)}, ${int(p.y)})`);
+        const p = generate(i);
+        console.log(`(widget) [port]   port[${i}] (${int(p.x)}, ${int(p.y)})`);
+
         _ports.push(p);
       }
 
@@ -176,6 +183,7 @@ export const usePorts = () => {
   };
 
   return {
+    portsUID,
     ports,
     resetPorts,
     updatePorts,

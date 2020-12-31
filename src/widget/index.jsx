@@ -39,7 +39,7 @@ export const Widget = ({ config: given }) => {
         const { action, payload } = data;
 
         console.log('(widget) [index] ++++ onmessage()');
-        console.log('(widget) [index] action: ', action);
+        // console.log('(widget) [index] action: ', action);
 
         if (action && action === 'resize' && payload) {
           const { width, height } = payload;

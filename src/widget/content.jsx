@@ -41,11 +41,12 @@ const getPortRadius = range => {
 
 export const AirportContent = ({ cw, ch, options }) => {
   const [vars, setVars] = useState(DEFAULT_VARS);
-  const { ports, resetPorts, updatePorts } = usePorts(null);
+  const { portsUID, ports, resetPorts, updatePorts } = usePorts(null);
   const { planes, resetPlanes, updatePlanes } = usePlanes(null);
 
-  const cwDelay = useDebounce(cw, DEBOUNCE_MSEC);
-  const chDelay = useDebounce(ch, DEBOUNCE_MSEC);
+  const cw_debounce = useDebounce(cw, DEBOUNCE_MSEC);
+  const ch_debounce = useDebounce(ch, DEBOUNCE_MSEC);
+  const ports_uid_debounce = useDebounce(portsUID, DEBOUNCE_MSEC);
 
   const { num_of_ports, num_of_planes, port_capacity } = options;
 
@@ -79,29 +80,26 @@ export const AirportContent = ({ cw, ch, options }) => {
       portSpacingDist,
       approachingDist,
     });
-  }, [cwDelay, chDelay]);
 
-  // RESET #2: Reset ports when the canvas size was reset.
-  useEffect(() => {
-    if (vars.portRadius > 1) {
-      resetPorts({
-        cw,
-        ch,
-        ...pick(['portSpacingDist'], vars),
-        ...pick(['num_of_ports'], options),
-      });
-    }
-  }, [vars.portRadius]);
+    resetPorts({
+      cw,
+      ch,
+      ...pick(['tick', 'portSpacingDist'], vars),
+      ...pick(['num_of_ports'], options),
+    });
+  }, [cw_debounce, ch_debounce]);
 
-  // RESET #3: Reset planes when ports were reset.
+  // RESET #2: Reset planes when ports were reset.
   useEffect(() => {
+    // console.log(`(widget) [content] (Change) portsUID: ${portsUID}`);
     resetPlanes({ ports, ...pick(['num_of_planes'], options) });
-  }, [ports.length]);
+  }, [ports_uid_debounce]);
 
   usePixiTicker(() => {
     let { lt, et, tick } = vars;
     const now = Date.now();
     const dt = mathlib.clamp((now - lt) / (1000 / 60), 0.001, 10);
+
     lt = now;
     et += dt;
     tick++;
@@ -140,9 +138,9 @@ export const AirportContent = ({ cw, ch, options }) => {
       <Container>
         {ports.length > 0 &&
           ports.map((port, i) => (
-            <Fragment key={`port-${i}`}>
+            <Fragment key={port.uid}>
               <PortGraphics
-                key={`port-graphics-${i}`}
+                key={`port-graphics-${port.uid}`}
                 vars={pick(['et', 'tick', 'portRadius'], vars)}
                 port={port}
                 options={pick(
