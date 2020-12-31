@@ -180,7 +180,7 @@ When people want to utilize the widget,
 they would download files from `dist` directory,
 and embed them in their HTML pages:
 
-- [airport.app.js](dist/airport.app.js) (683 KB)
+- [airport.app.js](dist/airport.app.js) (684 KB)
 - [airport.worker.js](dist/airport.worker.js) (15 KB)
 
 For this project, I am using `html-webpack-plugin` to generate a static page,
@@ -198,7 +198,7 @@ so that I can test the widget.
 
 <script type="text/javascript">
 Airport.app.init({
-  AIRPORT_RELATED_PARAMS_I WANT_TO_PASS
+  WHATEVER_PARAMS_YOU_WANT
 }); 
 </script>
 
