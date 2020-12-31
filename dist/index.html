@@ -22,18 +22,14 @@
 <script crossorigin src="https://cdn.jsdelivr.net/npm/react-pixi-fiber@1.0.0-beta.4/umd/react-pixi-alias.production.min.js"></script>
   -->
 
-<script type="text/javascript" src="airport.app.js?27c09d2c75f7be4fcae7"></script>
+<script type="text/javascript" src="airport.app.js?d09b7a7bfd1b21b2930b"></script>
 
 <script type="text/javascript">
-const HASH = 'f649c7f12067f96430fb';
-const WORKER_FILE_PATH = `./airport.worker.js?${HASH}`;
+const WORKER_FILE = './airport.worker.js?dce97e9874ccb4ce837a';
 
 const GRAY_300 = '#e2e2e2';
 const COLOR_NORM = '#19f7ff';
 const COLOR_FULL = '#de3d00';
-
-console.log('Airport: ', Airport);
-// console.log('Airport.app: ', Airport.app);
 
 Airport.app.init({
   // width: 800,
@@ -53,12 +49,12 @@ Airport.app.init({
   // text_color: GRAY_300,
   // text_color_norm: COLOR_NORM,
   // text_color_full: COLOR_FULL,
-  // worker_file_path: WORKER_FILE_PATH,
+  worker_file_path: WORKER_FILE,
 }); 
 
-const worker = new SharedWorker(WORKER_FILE_PATH);
+const worker = new SharedWorker(WORKER_FILE);
 
-setTimeout(() => {
+const resize = () => {
   worker.port.postMessage({
     action: 'resize',
     payload: {
@@ -66,8 +62,11 @@ setTimeout(() => {
       height: window.innerHeight,
     },
   });
-}, 1000);
+};
 
+window.addEventListener('resize', resize, true);
+
+window.setTimeout(resize, 400);
 </script>
 
 </body>

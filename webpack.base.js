@@ -77,6 +77,10 @@ module.exports = {
     ],
   },
   plugins: [
+    // https://github.com/webpack/webpack/issues/7112#issuecomment-703187668
+    // new webpack.ProvidePlugin({
+    //   window: 'global/window',
+    // }),
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       chunks: ['app'],

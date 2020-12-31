@@ -1,12 +1,12 @@
 {
   "name": "react-widget-airport",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "private": false,
   "description": "A React widget for Airport animations with flight departures/arrivials.",
   "main": "dist/airport.app.js",
   "scripts": {
     "pretty": "$npm_execpath prettier -w \"**/*.(js|jsx)\"",
-    "start": "$npm_execpath webpack serve --config webpack.dev.js",
+    "build:dev": "$npm_execpath webpack --config webpack.dev.js",
     "build": "$npm_execpath webpack --config webpack.prod.js",
     "serve": "http-server dist -a localhost -p 8080"
   },
@@ -62,7 +62,6 @@
     "style-loader": "^2.0.0",
     "webpack": "^5.11.1",
     "webpack-cli": "^4.3.0",
-    "webpack-dev-server": "4.0.0-beta.0",
     "webpack-merge": "^5.7.3"
   }
 }

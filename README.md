@@ -101,6 +101,7 @@ worker.port.postMessage({
 
 Yeah. I have some issues. We all fail, right?
 
+- `webpack-dev-server` fails ([see "3-5. Other Build Tools"](#3-5-other-build-tools))
 - `twin.macro` (Emotion & Tailwind) returns an empty object at runtime ([see notes](#5-3-emotion--tailwind)).
 - Externalizing `react`, `react-dom`, `pixi`, `react-pixi`, and `react-pixi-fiber` failed.
 [This is how I usually handle externals](https://github.com/minagawah/react-widget-airport/blob/main/webpack.base.js#L18),
@@ -446,7 +447,7 @@ export const AirportDemo = () => {
 ```
 yarn add ramda react react-dom pixi.js pixi.js-legacy react-pixi-fiber@1.0.0-beta.4
 
-yarn add --dev @babel/core @babel/preset-env @babel/preset-react @babel/cli core-js@3 @babel/runtime-corejs3 babel-loader file-loader style-loader css-loader postcss-loader webpack webpack-cli webpack-merge webpack-dev-server@4.0.0-beta.0 clean-webpack-plugin html-webpack-plugin license-webpack-plugin autoprefixer prettier http-server
+yarn add --dev @babel/core @babel/preset-env @babel/preset-react @babel/cli core-js@3 @babel/runtime-corejs3 babel-loader file-loader style-loader css-loader postcss-loader webpack webpack-cli webpack-merge clean-webpack-plugin html-webpack-plugin license-webpack-plugin autoprefixer prettier http-server
 ```
 
 
@@ -490,22 +491,28 @@ yarn add --dev babel-loader file-loader style-loader css-loader postcss-loader
 ### 3-5. Other Build Tools
 
 - webpack-merge
-- webpack-dev-server@4.0.0-beta.0
 - clean-webpack-plugin
 - html-webpack-plugin (only for testing)
 - license-webpack-plugin
 - autoprefixer
 - prettier
 
+yarn remove webpack-dev-server
+
 ```
-yarn add --dev webpack-merge webpack-dev-server@4.0.0-beta.0 clean-webpack-plugin html-webpack-plugin license-webpack-plugin autoprefixer prettier
+yarn add --dev webpack-merge clean-webpack-plugin html-webpack-plugin license-webpack-plugin autoprefixer prettier
 ```
 
-When using `webpack-dev-server`, the bundle library exports empty object.
-For our project, specifically, `Airport.app` becomes `{}`.
-This is is a bug, and is fixed in `webpack-dev-server@4.0.0-beta.0`
-(See
-*[solution](https://github.com/webpack/webpack-dev-server/issues/2484#issuecomment-749497713)*).
+As [mentioned](#1-about), `webpack-dev-server` does not work,
+and it is due to Webpack v5 release on 10/10/2020.
+I had mainly 2 issues.
+The first issue was that the bundled library exporting an empty object when using `webpack-dev-server`.
+For this project, specifically, `Airport.app` became `{}`.
+It was a bug, and a
+[solution](https://github.com/webpack/webpack-dev-server/issues/2484#issuecomment-749497713)
+was to use `webpack-dev-server@4.0.0-beta.0`.
+The second issue is associated with *SharedWorker*, and `window` becomes undefined.
+For this, I still have no solutions.
 
 
 ### 3-6. React
@@ -591,24 +598,19 @@ where `pixi.js-stable` is a newly defined alias to the original `pixi.js`.
 
 Note: `chrome://inspect/#workers` to inspect running workers.
 
-
-### DEV
-
-Served at [localhost:8080](http://localhost:8080)
+### Build for DEV
 
 ```
-yarn start
+yarn build:dev
 ```
 
-### PROD
-
-Builds under: [/dist](dist)
+### Build for PROD
 
 ```
 yarn build
 ```
 
-### http-server (to serve the built files)
+### Serve the built files
 
 ```
 yarn serve
