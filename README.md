@@ -1,6 +1,6 @@
 # react-widget-airport
 
-A React widget for Airport animations with flight departures/arrivials.
+A React widget (UMD library) for Airport animations with flight departures/arrivals.
 
 [1. About](#1-about)  
 [2. How It Works](#2-how-it-works)  
@@ -19,10 +19,12 @@ A React widget for Airport animations with flight departures/arrivials.
 &nbsp; &nbsp; [3-7. Other Dependencies](#3-8-other-dependencies)  
 [4. Dev + Build](#4-dev--build)  
 [5. Notes](#5-notes)  
-&nbsp; &nbsp; [5-1. Module Exports Issues](#5-1-module-exports-issues)  
-&nbsp; &nbsp; [5-2. Emotion & Tailwind](#5-2-emotion--tailwind)  
-&nbsp; &nbsp; [5-3. APIPlugin: Using the Webpack hash](#5-3-apiplugin--using-the-webpack-hash)  
-&nbsp; &nbsp; [5-4. Preact](#5-4-preact)  
+&nbsp; &nbsp; [5-1. Issues: Module Exports](#5-1-issues-module-exports)  
+&nbsp; &nbsp; [5-2. Issues: webpack-dev-server](#5-2-issues-webpack-dev-server)  
+&nbsp; &nbsp; [5-3. Issues: Emotion & Tailwind](#5-3-issues-emotion--tailwind)  
+&nbsp; &nbsp; [5-4. APIPlugin - Using Webpack Hash](#5-4-apiplugin---using-webpack-hash)  
+&nbsp; &nbsp; [5-5. Using Preact - Minimize App Size](#5-5-using-preact---minimize-app-size)  
+&nbsp; &nbsp; [5-6. Using Pixi Legacy](#5-6-using-pixi-legacy)  
  
 [6. LICENSE](#6-license)  
 
@@ -45,7 +47,7 @@ or has more demands when component *reuse* were the concern.
 Thus, I would say the demand is very limited.  
 Nonetheless, it should help someone out there.
 
-Instead of being **installed**, this app is to be **embedded** in other apps.  
+Instead of being *"installed"*, this app is to be *"embedded"* in other apps.  
 (or, you can totally call it from another React apps.
 *[See Example](#c-calling-from-other-react-apps)*)
 
@@ -60,6 +62,10 @@ Airport.app.init();
 </script>
 ```
 
+If you plan to use [preact](https://github.com/preactjs/preact),
+follow the steps in *[5-5. Using Preact](#5-5-using-preact---minimize-app-size).*
+
+
 #### React Pixi Fiber
 
 It also demonstrates implementing a canvas animation using
@@ -72,7 +78,7 @@ Note #1: Another option is to use
 but I had never tried.
 See *[the problem](https://github.com/inlet/react-pixi/issues/5)* they have.  
 Note #2: Note that `reac-pixi-fiber` does *not* work with `preact`
-(See: *[Why](#3-6-react)* or *[Using Preact](#5-5-preact)*).
+(See: *[Why](#3-6-react)* or *[5-5. Using Preact](#5-5-using-preact---minimize-app-size)*).
 
 
 #### SharedWorker
@@ -101,8 +107,8 @@ worker.port.postMessage({
 
 Yeah. I have some issues. We all fail, right?
 
-- `webpack-dev-server` fails ([see "3-5. Other Build Tools"](#3-5-other-build-tools))
-- `twin.macro` (Emotion & Tailwind) returns an empty object at runtime ([see notes](#5-3-emotion--tailwind)).
+- `webpack-dev-server` fails ([see "5-2. Issues: webpack-dev-server"](#5-2-issues-webpack-dev-server))
+- `twin.macro` (Emotion & Tailwind Issue) returns an empty object at runtime ([see notes](#5-3-issues-emotion--tailwind)).
 - Externalizing `react`, `react-dom`, `pixi`, `react-pixi`, and `react-pixi-fiber` failed.
 [This is how I usually handle externals](https://github.com/minagawah/react-widget-airport/blob/main/webpack.base.js#L18),
 but it does not work for UMD...
@@ -172,7 +178,7 @@ export const init = config => {
 
 As you can see, it only exports `init` function using `export`.  
 If you want to use `export default`,
-then *[you need a special setup for babel](#5-1-module-exports-issues)*.
+then *[you need a special setup for babel](#5-1-issues-module-exportss)*.
 
 The module is now exposed globally as `Airport`.
 
@@ -497,22 +503,11 @@ yarn add --dev babel-loader file-loader style-loader css-loader postcss-loader
 - autoprefixer
 - prettier
 
-yarn remove webpack-dev-server
-
 ```
 yarn add --dev webpack-merge clean-webpack-plugin html-webpack-plugin license-webpack-plugin autoprefixer prettier
 ```
 
-As [mentioned](#1-about), `webpack-dev-server` does not work,
-and it is due to Webpack v5 release on 10/10/2020.
-I had mainly 2 issues.
-The first issue was that the bundled library exporting an empty object when using `webpack-dev-server`.
-For this project, specifically, `Airport.app` became `{}`.
-It was a bug, and a
-[solution](https://github.com/webpack/webpack-dev-server/issues/2484#issuecomment-749497713)
-was to use `webpack-dev-server@4.0.0-beta.0`.
-The second issue is associated with *SharedWorker*, and `window` becomes undefined.
-For this, I still have no solutions.
+See [issues with "webpack-dev-server"](#5-2-issues-webpack-dev-server).
 
 
 ### 3-6. React
@@ -527,19 +522,15 @@ yarn add react react-dom
 yarn add --dev @babel/preset-react
 ```
 
-I have another project, and it uses
-[preact](https://github.com/preactjs/preact),
-for the size matters.  
-I manated to work alright
-(although I need `babel-plugin-transform-react-jsx` for "h" pragma)
-for that one.  
-However, it did not work with this Airport widget
-because `react-pixi-fiber` requires
-*reconciliation* which is available for React version 16 and up.
-
-See *[5-5. Preact](#5-5-preact)* if you are planning to use `preact`.
+I have another project using [preact](https://github.com/preactjs/preact) instead of React.  
+For this, I can bundle UMD library fine.  
+(see *[5-5. Using Preact](#5-5-using-preact---minimize-app-size)*)  
+However, it did not work for this Airport widget.  
+It was due to `react-pixi-fiber` requires *reconciliation*
+which is available for React version 16 and up...
 
 &nbsp;
+
 
 ### 3-7. Other Dependencies
 
@@ -555,40 +546,7 @@ yarn add ramda pixi.js pixi.js-legacy react-pixi-fiber@1.0.0-beta.4
 yarn add --dev http-server
 ```
 
-Some browsers do not support WebGL the way Pixi v5 wants,
-and must fallback to canvas rendering.
-There, we need `pixi.js-legacy` instead.  
-There are several ways to handle this,
-but I found
-[a neat solution](https://github.com/inlet/react-pixi/issues/126#issuecomment-514184770),
-and this is what I do in this project.  
-The idea is to export both `pixi.js` and `pixi.js-legacy` in the codebase,
-and use aliases to internally handle names.  
-Whenever looking up `pixi.js`, it refers to `src/lib/pixi.js`:
-
-**# webpack.base.js**
-
-```js
-  resolve: {
-    extensions: ['.js', '.jsx'],
-    alias: {
-      'pixi.js': path.resolve(__dirname, 'src/lib/pixi.js'),
-      'pixi.js-stable': path.resolve(__dirname, 'node_modules/pixi.js'),
-      'react-pixi$': 'react-pixi-fiber/react-pixi-alias',
-      '@': path.join(__dirname, 'src'),
-    },
-  },
-```
-
-**# src/lib/pixi.js**
-
-```js
-export * from 'pixi.js-stable';
-export * from 'pixi.js-legacy';
-```
-
-where `pixi.js-stable` is a newly defined alias to the original `pixi.js`.
-
+Check out a neat trick when using `pixi.js-legacy` (see *[5-6. Using Pixi Legacy](#5-6-using-pixi-legacy)*)
 
 &nbsp;
 
@@ -625,7 +583,7 @@ yarn serve
 
 ## 5. Notes
 
-### 5-1. Module Exports Issues
+### 5-1. Issues: Module Exportss
 
 When exporting UMD library, you may encounter tons of issues.  
 (e.g. `export default`, etc.)  
@@ -636,8 +594,26 @@ Here is a list of plugins you may want to dig in:
 - @babel/plugin-proposal-export-namespace-from
 - babel-plugin-add-module-exports
 
+&nbsp;
 
-### 5-2. Emotion & Tailwind
+
+### 5-2. Issues: webpack-dev-server
+
+As [mentioned](#1-about), `webpack-dev-server` does not work,
+and it is due to Webpack v5 release on 10/10/2020.
+I had mainly 2 issues.
+The first issue was that the bundled library exporting an empty object when using `webpack-dev-server`.
+For this project, specifically, `Airport.app` became `{}`.
+It was a bug, and a
+[solution](https://github.com/webpack/webpack-dev-server/issues/2484#issuecomment-749497713)
+was to use `webpack-dev-server@4.0.0-beta.0`.
+The second issue is associated with *SharedWorker*, and `window` becomes undefined.
+For this, I still have no solutions.
+
+&nbsp;
+
+
+### 5-3. Issues: Emotion & Tailwind
 
 Attempt to use `twin.macro` (Twin) for Emotion and Tailwind fails.
 
@@ -734,7 +710,7 @@ module.exports = {
 ```
 
 
-### 5-3. APIPlugin: Using the Webpack hash
+### 5-4. APIPlugin - Using Webpack Hash
 
 This is a personal note.
 For `airport.app.js`, we have a Webpack hash added.
@@ -779,7 +755,8 @@ const worker = new SharedWorker(`./my_worker.js?{__webpack_hash__}`)
 
 &nbsp;
 
-### 5-4. Preact
+
+### 5-5. Using Preact - Minimize App Size
 
 If you are are planning to use
 [preact](https://github.com/preactjs/preact),
@@ -830,6 +807,46 @@ and you need resolutions for the name.
     }
   }
 ```
+
+&nbsp;
+
+
+### 5-6. Using Pixi Legacy
+
+Some browsers do not support WebGL the way Pixi v5 wants,
+and must fallback to canvas rendering.
+There, we need `pixi.js-legacy` instead.  
+There are several ways to handle this,
+but I found
+[a neat solution](https://github.com/inlet/react-pixi/issues/126#issuecomment-514184770),
+and this is what I do in this project.  
+The idea is to export both `pixi.js` and `pixi.js-legacy` in the codebase,
+and use aliases to internally handle names.  
+Whenever looking up `pixi.js`, it refers to `src/lib/pixi.js`:
+
+**# webpack.base.js**
+
+```js
+  resolve: {
+    extensions: ['.js', '.jsx'],
+    alias: {
+      'pixi.js': path.resolve(__dirname, 'src/lib/pixi.js'),
+      'pixi.js-stable': path.resolve(__dirname, 'node_modules/pixi.js'),
+      'react-pixi$': 'react-pixi-fiber/react-pixi-alias',
+      '@': path.join(__dirname, 'src'),
+    },
+  },
+```
+
+**# src/lib/pixi.js**
+
+```js
+export * from 'pixi.js-stable';
+export * from 'pixi.js-legacy';
+```
+
+where `pixi.js-stable` is a newly defined alias to the original `pixi.js`.
+
 
 &nbsp;
 
