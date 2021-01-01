@@ -118,8 +118,9 @@ const selectNextDestination = ({
 export const usePlanes = () => {
   const [planes, setPlanes] = useState([]);
 
-  const resetPlanes = ({ ports = [], num_of_planes }) => {
+  const resetPlanes = ({ ports = [], options }) => {
     console.log('(widget) [plane] RESET --> PLANES');
+    const { num_of_planes } = options;
 
     // console.log(`(widget) [plane] ports.length: ${ports.length}`);
 
@@ -168,7 +169,7 @@ export const usePlanes = () => {
       for (let i = 0; i < num_of_planes; i++) {
         const p = generate(i);
         // if (i < 10) {
-        //   console.log(`(widget) [plane] plane[${i}] (${int(p.x)}, ${int(p.y)})`);
+        //   console.log(`(widget) [plane]   [${i}] (${int(p.x)}, ${int(p.y)})`);
         // }
         _planes.push(p);
       }

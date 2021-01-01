@@ -24,6 +24,11 @@ export const rand_int = (min, max) =>
 
 /* alias */ export const randInt = rand_int;
 
+export const gen_code4 = () =>
+  Math.floor((1 + Math.random()) * 0x10000)
+    .toString(16)
+    .substring(1);
+
 /**
  * Get the norm for `val` between `min` and `max`.
  * Ex. norm(75, 0, 100) ---> 0.75

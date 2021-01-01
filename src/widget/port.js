@@ -5,7 +5,7 @@ import * as PIXI from 'pixi.js';
 import * as mathlib from '@/lib/math';
 import { DEFAULT_AIRPORT_OPTIONS, TEXT_FONT_FAMILY } from '@/constants';
 
-const { int } = mathlib;
+const { int, gen_code4 } = mathlib;
 
 const portTextStyle = {
   align: 'right',
@@ -26,18 +26,19 @@ export const PortGraphics = CustomPIXIComponent(
         options: { port_capacity, port_color_full, port_color_norm },
       } = newProps;
 
+      if (oldProps?.uid !== newProps?.uid) {
+        console.log(`(widget) (PortGraphics) ${newProps?.uid} tick: ${tick}`);
+        console.log(
+          `(widget) (PortGraphics) ${newProps?.uid} (${int(x)}, ${int(y)})`
+        );
+      }
+
       // if (tick >= 10 && tick <= 20 && !(tick % 10)) {
-      //   console.log(`(widget) (PortGraphic) ::: ${tick}`);
-      //   console.log('(widget) (PortGraphic) portRadius: ', portRadius);
-      //   console.log(`(widget) (PortGraphic) (${int(x)}, ${int(y)})`);
       // }
 
       // const alpha = 0.35 + Math.sin(et / 20) * 0.2;
 
-      if (typeof oldProps !== 'undefined') {
-        g.clear();
-      }
-
+      g.clear();
       g.lineStyle(
         1,
         approachingCount > port_capacity ? port_color_full : port_color_norm,
@@ -94,14 +95,17 @@ export const usePorts = () => {
   const [portsUID, setPortsUID] = useState(null);
   const [ports, setPorts] = useState([]);
 
-  const resetPorts = ({ tick, cw, ch, portSpacingDist, num_of_ports }) => {
+  const resetPorts = ({ cw, ch, vars, options }) => {
     console.log('(widget) [port] RESET --> PORTS');
 
-    setPorts([]);
-    setPortsUID(tick);
+    const { tick, portSpacingDist } = vars;
+    const { num_of_ports } = options;
 
     if (cw && ch) {
       const _ports = [];
+
+      const _uid = gen_code4();
+      setPortsUID(_uid);
 
       const generate = index => {
         let x = 0;
@@ -135,7 +139,7 @@ export const usePorts = () => {
         }
 
         return {
-          uid: `${tick}-${index}`,
+          uid: `${_uid}-${index}`,
           x,
           y,
           approachingCount: 0,
@@ -143,12 +147,10 @@ export const usePorts = () => {
         };
       };
 
-      console.log('(widget) [port] ports:');
-
+      // console.log('(widget) [port] ports:');
       for (let i = 0; i < num_of_ports; i++) {
         const p = generate(i);
-        console.log(`(widget) [port]   port[${i}] (${int(p.x)}, ${int(p.y)})`);
-
+        // console.log(`(widget) [port]   [${i}] (${int(p.x)}, ${int(p.y)})`);
         _ports.push(p);
       }
 
