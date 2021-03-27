@@ -1,20 +1,22 @@
 {
   "name": "react-widget-airport",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "private": false,
   "description": "A React widget for Airport animations with flight departures/arrivials.",
   "main": "dist/airport.app.js",
   "scripts": {
-    "pretty": "$npm_execpath prettier -w \"**/*.(js|jsx)\"",
-    "build:dev": "$npm_execpath webpack --config webpack.dev.js",
-    "build": "$npm_execpath webpack --config webpack.prod.js",
+    "pretty": "prettier -w \"**/*.(js|jsx)\"",
+    "build:dev": "webpack --config webpack.dev.js",
+    "build": "webpack --config webpack.prod.js",
+    "start": "$npm_execpath run build:dev && $npm_execpath run serve",
     "serve": "http-server dist -a localhost -p 8080"
   },
   "repository": "https://github.com/minagawah/react-widget-airport.git",
   "keywords": [
-    "react",
+    "React",
     "widget",
-    "pixi",
+    "UMD Library",
+    "PIXI",
     "react-pixi-fiber"
   ],
   "author": "Hiroki Minagawa <minagawa@tokyo800.jp>",
