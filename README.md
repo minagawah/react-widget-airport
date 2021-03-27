@@ -15,8 +15,7 @@ A React widget (UMD library) for Airport animations with flight departures/arriv
 &nbsp; &nbsp; [3-3. Webpack](#3-3-webpack)  
 &nbsp; &nbsp; [3-4. Loaders](#3-4-loaders)  
 &nbsp; &nbsp; [3-5. Other Build Tools](#3-5-other-build-tools)  
-&nbsp; &nbsp; [3-6. React](#3-6-react)  
-&nbsp; &nbsp; [3-7. Other Dependencies](#3-8-other-dependencies)  
+&nbsp; &nbsp; [3-6. Other Dependencies](#3-6-other-dependencies)  
 [4. Dev + Build](#4-dev--build)  
 [5. Notes](#5-notes)  
 &nbsp; &nbsp; [5-1. Issues: Module Exports](#5-1-issues-module-exports)  
@@ -54,8 +53,15 @@ It exposes the widget globally (in our case `Airport`).
 So, this is how embedding is done:
 
 ```html
-<script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+<script
+  crossorigin
+  src="https://unpkg.com/react@17/umd/react.production.min.js"
+></script>
+<script
+  crossorigin
+  src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"
+></script>
+
 <script type="text/javascript" src="./airport.app.js"></script>
 
 <script type="text/javascript">
@@ -190,8 +196,14 @@ so that I can test the widget.
   <body>
     <div id="airport"></div>
 
-   <script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
-   <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react@17/umd/react.production.min.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"
+    ></script>
 
     <script
       type="text/javascript"
@@ -244,8 +256,14 @@ So, the app starts when it renders React app into a designated DOM:
 ```html
 <div id="airport"></div>
 
-<script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+<script
+  crossorigin
+  src="https://unpkg.com/react@17/umd/react.production.min.js"
+></script>
+<script
+  crossorigin
+  src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"
+></script>
 <script type="text/javascript" src="./airport.app.js"></script>
 ```
 
@@ -722,7 +740,7 @@ here are the steps.
 
 ```
 IMPORTANT:
-Be aware, 'preact' DOES NOT WORK with 'react-pixi-fiber'!!!  
+Be aware, 'preact' DOES NOT WORK with 'react-pixi-fiber'!!!
 It is due to 'react-pixi-fiber' requires _reconciliation_
 which is available for React version 16 and up...
 ```
