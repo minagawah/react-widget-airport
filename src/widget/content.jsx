@@ -1,6 +1,8 @@
-import React, { Fragment, useEffect, useState } from 'react';
 import { Container, usePixiTicker } from 'react-pixi-fiber';
 import * as PIXI from 'pixi.js';
+
+const { Fragment, useEffect, useState } = React;
+
 import { pick } from 'ramda';
 
 import * as mathlib from '@/lib/math';

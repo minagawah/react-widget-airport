@@ -1,15 +1,14 @@
 {
   "name": "react-widget-airport",
-  "version": "0.1.17",
+  "version": "0.2.0",
   "private": false,
   "description": "A React widget for Airport animations with flight departures/arrivials.",
   "main": "dist/airport.app.js",
   "scripts": {
-    "pretty": "prettier -w \"**/*.(js|jsx)\"",
-    "build:dev": "webpack --config webpack.dev.js",
-    "build": "webpack --config webpack.prod.js",
-    "start": "$npm_execpath run build:dev && $npm_execpath run serve",
-    "serve": "http-server dist -a localhost -p 8080"
+    "prettier": "prettier -w \"*.*\" \"**/*.(js|jsx)\"",
+    "build": "webpack",
+    "serve": "http-server dist -a localhost -p 8080",
+    "start": "$npm_execpath run build && $npm_execpath run serve"
   },
   "repository": "https://github.com/minagawah/react-widget-airport.git",
   "keywords": [
@@ -36,34 +35,36 @@
       "last 1 safari version"
     ]
   },
+  "peerDependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
   "dependencies": {
-    "pixi.js": "^5.3.7",
-    "pixi.js-legacy": "^5.3.7",
+    "pixi.js": "^6.0.1",
+    "pixi.js-legacy": "^6.0.1",
     "ramda": "^0.27.1",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
     "react-pixi-fiber": "1.0.0-beta.4"
   },
   "devDependencies": {
-    "@babel/cli": "^7.12.10",
-    "@babel/core": "^7.12.10",
-    "@babel/preset-env": "^7.12.11",
-    "@babel/preset-react": "^7.12.10",
-    "@babel/runtime-corejs3": "^7.12.5",
-    "autoprefixer": "^10.1.0",
+    "@babel/cli": "^7.13.10",
+    "@babel/core": "^7.13.13",
+    "@babel/preset-env": "^7.13.12",
+    "@babel/preset-react": "^7.13.13",
+    "@babel/runtime-corejs3": "^7.13.10",
+    "autoprefixer": "^10.2.5",
     "babel-loader": "^8.2.2",
     "clean-webpack-plugin": "^3.0.0",
     "core-js": "3",
-    "css-loader": "^5.0.1",
+    "css-loader": "^5.2.0",
     "file-loader": "^6.2.0",
-    "html-webpack-plugin": "^4.5.0",
+    "html-webpack-plugin": "^5.3.1",
     "http-server": "^0.12.3",
-    "license-webpack-plugin": "^2.3.9",
-    "postcss-loader": "^4.1.0",
+    "license-webpack-plugin": "^2.3.16",
+    "postcss-loader": "^5.2.0",
     "prettier": "^2.2.1",
     "style-loader": "^2.0.0",
-    "webpack": "^5.11.1",
-    "webpack-cli": "^4.3.1",
+    "webpack": "^5.28.0",
+    "webpack-cli": "^4.5.0",
     "webpack-merge": "^5.7.3"
   }
 }

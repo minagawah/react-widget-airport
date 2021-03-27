@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
 import { CustomPIXIComponent, usePixiTicker } from 'react-pixi-fiber';
 import * as PIXI from 'pixi.js';
+
+const { useState } = React;
 
 import * as mathlib from '@/lib/math';
 

@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
 import { Stage } from 'react-pixi-fiber';
+
+const { useState, useEffect } = React;
 
 import { int } from '@/lib/math';
 import {

@@ -3,8 +3,12 @@ const webpack = require('webpack');
 const APIPlugin = require('webpack/lib/APIPlugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const LicenseWebpackPlugin = require('license-webpack-plugin')
+  .LicenseWebpackPlugin;
 
 module.exports = {
+  mode: 'production',
+  devtool: 'hidden-source-map',
   entry: {
     app: './src/index.jsx',
     worker: './src/worker.js',
@@ -15,34 +19,22 @@ module.exports = {
     library: ['Airport', '[name]'],
     libraryTarget: 'umd',
   },
-  // externals: makeExternals([
-  //   [
-  //     'core-js',
-  //     'https://cdnjs.cloudflare.com/ajax/libs/core-js/3.8.0/minified.min.js',
-  //   ],
-  //   [
-  //     'react',
-  //     'https://unpkg.com/react@17/umd/react.production.min.js',
-  //     'React',
-  //   ],
-  //   [
-  //     'react-dom',
-  //     'https://unpkg.com/react-dom@17/umd/react-dom.production.min.js',
-  //     'ReactDOM',
-  //   ],
-  //   [
-  //     'pixi',
-  //     'https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.4.5/pixi.min.js',
-  //     'ReactPIXI',
-  //   ],
-  //   [
-  //     'react-pixi-fiber',
-  //     'https://cdn.jsdelivr.net/npm/react-pixi-fiber@1.0.0-beta.4/umd/react-pixi-alias.production.min.js',
-  //     'ReactPixiFiber',
-  //   ],
-  // ]),
+  externals: {
+    react: 'React',
+    React__default: 'window.React',
+    'react-dom': 'ReactDOM',
+  },
   stats: {
     colors: true,
+  },
+  optimization: {
+    minimize: true,
+  },
+  performance: {
+    // Exceeds the max size...
+    // Default: 244 KiB
+    maxEntrypointSize: 921600, // 512000
+    maxAssetSize: 921600, // 512000
   },
   resolve: {
     extensions: ['.js', '.jsx'],
@@ -77,6 +69,7 @@ module.exports = {
     ],
   },
   plugins: [
+    new webpack.DefinePlugin({ NODE_ENV: '"production"' }),
     // https://github.com/webpack/webpack/issues/7112#issuecomment-703187668
     // new webpack.ProvidePlugin({
     //   window: 'global/window',
@@ -97,22 +90,6 @@ module.exports = {
     // const worker = new SharedWorker('./my_worker.js')
     // const worker = new SharedWorker(`./my_worker.js?{__webpack_hash__}`)
     new APIPlugin(),
+    new LicenseWebpackPlugin({ perChunkOutput: false }),
   ],
 };
-
-// function makeExternals(mapping) {
-//   return mapping.reduce(
-//     (acc, [name, url, alt]) => ({
-//       ...acc,
-//       [name]: ['commonjs', 'commonjs2', 'amd', 'root'].reduce(
-//         (acc2, key) => ({
-//           ...acc2,
-//           // [key]: [url, key === 'root' ? alt || name : name],
-//           [key]: key === 'root' ? alt || name : name,
-//         }),
-//         {}
-//       ),
-//     }),
-//     {}
-//   );
-// }
