@@ -8,6 +8,7 @@ const LicenseWebpackPlugin = require('license-webpack-plugin')
 
 module.exports = {
   mode: 'production',
+  devtool: 'hidden-source-map',
   entry: {
     app: './src/index.jsx',
     worker: './src/worker.js',
@@ -27,11 +28,13 @@ module.exports = {
     colors: true,
   },
   optimization: {
-    minimize: false,
+    minimize: true,
   },
   performance: {
-    maxEntrypointSize: 921600, // 900 KB
-    maxAssetSize: 921600, // 900 KB
+    // Exceeds the max size...
+    // Default: 244 KiB
+    maxEntrypointSize: 921600, // 512000
+    maxAssetSize: 921600, // 512000
   },
   resolve: {
     extensions: ['.js', '.jsx'],
@@ -66,6 +69,11 @@ module.exports = {
     ],
   },
   plugins: [
+    new webpack.DefinePlugin({ NODE_ENV: '"production"' }),
+    // https://github.com/webpack/webpack/issues/7112#issuecomment-703187668
+    // new webpack.ProvidePlugin({
+    //   window: 'global/window',
+    // }),
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       chunks: ['app'],

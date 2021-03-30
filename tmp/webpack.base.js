@@ -3,11 +3,8 @@ const webpack = require('webpack');
 const APIPlugin = require('webpack/lib/APIPlugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const LicenseWebpackPlugin = require('license-webpack-plugin')
-  .LicenseWebpackPlugin;
 
 module.exports = {
-  mode: 'production',
   entry: {
     app: './src/index.jsx',
     worker: './src/worker.js',
@@ -28,10 +25,6 @@ module.exports = {
   },
   optimization: {
     minimize: false,
-  },
-  performance: {
-    maxEntrypointSize: 921600, // 900 KB
-    maxAssetSize: 921600, // 900 KB
   },
   resolve: {
     extensions: ['.js', '.jsx'],
@@ -82,6 +75,5 @@ module.exports = {
     // const worker = new SharedWorker('./my_worker.js')
     // const worker = new SharedWorker(`./my_worker.js?{__webpack_hash__}`)
     new APIPlugin(),
-    new LicenseWebpackPlugin({ perChunkOutput: false }),
   ],
 };

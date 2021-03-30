@@ -5,9 +5,11 @@ A React widget (UMD library) for Airport animations with flight departures/arriv
 [1. About](#1-about)  
 [2. How It Works](#2-how-it-works)  
 &nbsp; &nbsp; [2-1. UMD Library](#2-1-umd-library)  
-&nbsp; &nbsp; [2-2. App Structure](#2-2-app-structure)  
+&nbsp; &nbsp; [2-2. APIPlugin - Using Webpack Hash](#2-2-apiplugin---using-webpack-hash)  
+&nbsp; &nbsp; [2-3. Using Pixi Legacy](#2-3-using-pixi-legacy)  
+&nbsp; &nbsp; [2-4. App Structure](#2-4-app-structure)  
 &nbsp; &nbsp; &nbsp; &nbsp; [(a) Basic Entry](#a-basic-entry)  
-&nbsp; &nbsp; &nbsp; &nbsp; [(b) react-pixi-fiber](#b-react-pixi-fiber)  
+&nbsp; &nbsp; &nbsp; &nbsp; [(b) `react-pixi-fiber`](#b-react-pixi-fiber)  
 &nbsp; &nbsp; &nbsp; &nbsp; [(c) Calling from Other React Apps](#c-calling-from-other-react-apps)  
 [3. What I Did](#3-what-i-did)  
 &nbsp; &nbsp; [3-1. Installed NPM Packages All](#3-1-installed-npm-packages-all)  
@@ -15,16 +17,13 @@ A React widget (UMD library) for Airport animations with flight departures/arriv
 &nbsp; &nbsp; [3-3. Webpack](#3-3-webpack)  
 &nbsp; &nbsp; [3-4. Loaders](#3-4-loaders)  
 &nbsp; &nbsp; [3-5. Other Build Tools](#3-5-other-build-tools)  
-&nbsp; &nbsp; [3-6. Other Dependencies](#3-6-other-dependencies)  
+&nbsp; &nbsp; [3-6. Emotion](#3-6-emotion)  
+&nbsp; &nbsp; [3-7. Other Dependencies](#3-7-other-dependencies)  
 [4. Dev + Build](#4-dev--build)  
 [5. Notes](#5-notes)  
-&nbsp; &nbsp; [5-1. Issues: Module Exports](#5-1-issues-module-exports)  
-&nbsp; &nbsp; [5-2. Issues: webpack-dev-server](#5-2-issues-webpack-dev-server)  
-&nbsp; &nbsp; [5-3. Issues: Emotion & Tailwind](#5-3-issues-emotion--tailwind)  
-&nbsp; &nbsp; [5-4. APIPlugin - Using Webpack Hash](#5-4-apiplugin---using-webpack-hash)  
-&nbsp; &nbsp; [5-5. Using Preact - Minimize App Size](#5-5-using-preact---minimize-app-size)  
-&nbsp; &nbsp; [5-6. Using Pixi Legacy](#5-6-using-pixi-legacy)
-
+&nbsp; &nbsp; [5-1. Issues: webpack-dev-server](#5-1-issues-webpack-dev-server)  
+&nbsp; &nbsp; [5-2. Issues: Tailwind](#5-2-issues-tailwind)  
+&nbsp; &nbsp; [5-3. Using Preact - Minimize App Size](#5-3-using-preact---minimize-app-size)  
 [6. LICENSE](#6-license)
 
 ![screenshot](screenshot.png)
@@ -38,18 +37,12 @@ A React widget (UMD library) for Airport animations with flight departures/arriv
 
 #### Embedded React Widget
 
-This is an attempt to show how you can bundle your React app into a widget (UMD library).
-I could have made it installed as a dependency for other repos.
-As a matter of fact, that is rather a popular approach,
-or has more demands when component _reuse_ were the concern.
-Thus, I would say the demand is very limited.  
-Nonetheless, it should help someone out there.
-
+This is an attempt to show how you can bundle your React app into a widget (UMD library).  
 Instead of being _"installed"_, this app is to be _"embedded"_ in other apps.  
 (or, you can totally call it from another React apps.
-_[See Example](#c-calling-from-other-react-apps)_)
+_[See Example](#b-calling-from-other-react-apps)_)
 
-It exposes the widget globally (in our case `Airport`).  
+It exposes the widget globally (in our case `Memo`).  
 So, this is how embedding is done:
 
 ```html
@@ -85,8 +78,8 @@ Note #2: Note that `reac-pixi-fiber` does _not_ work with `preact`
 
 #### SharedWorker
 
-As you can see, it outputs 2 bundle files (it is not necessary).
-One of them is for
+As you can see, it outputs 2 bundle files (you can output 1).
+For this app, one of the files is for
 _[SharedWorker](https://developer.mozilla.org/en-US/docs/Web/API/SharedWorker),_
 and it allows the caller of the widget to send messages to the widget.  
 Here is how a caller can send messages to its widget:
@@ -110,7 +103,7 @@ worker.port.postMessage({
 Yeah. I have some issues. We all fail, right?
 
 - `webpack-dev-server` fails ([see "5-2. Issues: webpack-dev-server"](#5-2-issues-webpack-dev-server))
-- `twin.macro` (Emotion & Tailwind Issue) returns an empty object at runtime ([see notes](#5-3-issues-emotion--tailwind)).
+- `twin.macro` (Tailwind macro) fails at runtime ([see notes](#5-3-issues-tailwind)).
 - Externalizing `pixi`, `react-pixi`, or `react-pixi-fiber` fails.
 - Currently, `react-pixi-fiber` works ONLY when `process.env.NODE_ENV === 'production'`. Looks like other packages which utilizes `react-reconciler` are also not working (see [issue](https://github.com/diegomura/react-pdf/issues/565#issuecomment-781471807). Emits `TypeError: Cannot set property 'getCurrentStack' of undefined`.
 
@@ -138,7 +131,7 @@ It's just that we frequently bump into problems when working with `babel`...
   },
 ```
 
-I have 2 entries in the above, but you can only have 1.  
+I have 2 entries in the above, but you can totally have only 1.  
 I have 2 because one of them is for `SharedWorker`,
 and it has to be an independent file.
 
@@ -172,21 +165,23 @@ export const init = config => {
 };
 ```
 
-As you can see, it only exports `init` function using `export`.  
+As you can see, it exports `init`.  
 If you want to use `export default`,
 then _[you need a special setup for babel](#5-1-issues-module-exportss)_.
 
-The module is now exposed globally as `Airport`.
+The module is now exposed globally as `Memo`.
 
-When people want to utilize the widget,
+When people want to use the widget,
 they would download files from `dist` directory,
 and embed them in their HTML pages:
 
 - [airport.app.js](dist/airport.app.js) (722 KB)
 - [airport.worker.js](dist/airport.worker.js) (15 KB)
 
-For this project, I am using `html-webpack-plugin` to generate a static page,
-so that I can test the widget.
+For this project, I use `html-webpack-plugin` for a static page
+so that I can test the widget.  
+As far as creating a widget, you don't need this,
+but for this time, this is for a testing purpose.
 
 `src/index.html`
 
@@ -231,21 +226,103 @@ is replaced with:
 /airport.app.js?[WHATEVER_THE_HASH_GENERATED]
 ```
 
-Two things to note about the above HTML file.  
-First of all, we have the HTML only for a _testing_ reason.  
-Secondly, I could have statically served HTML file.
-Instead, I use `html-webpack-plugin` to output to `dist`
-because I simply want to append a hash to the file,
-so that I don't have to reload hard.  
-When you want to output UMD library, you don't need an HTML file.  
-Simple is that.
+Once again, having HTML is only for testing reason.
+Also, I didn't have to use `html-webpack-plugin` to generate the HTML page
+but I could simply serve the HTML page statically.
+I use `html-webpack-plugin` only because
+I wanted to append a _"hash"_ to the resources
+so that I don't have to worry about browser cache when developing.
 
 &nbsp;
 
-### 2-2. App Structure
+### 2-2. APIPlugin - Using Webpack Hash
+
+Alright. This has nothing to do with UMD library.
+This is about sharing _"hash"_ generated between two files.
+I told you in the previous that I use _"hash"_.
+For the same _"hash"_ that is appended to `memo.app.js`,
+I want the same for `memo.worker.js`.
+Instead of having this:
+
+```js
+const worker = new SharedWorker('./my_worker.js');
+```
+
+we want something like this:
+
+```js
+const worker = new SharedWorker('./my_worker.js?4e066ad15f78a871e174');
+```
+
+This is where `APIPlugin` of Webpack's comes in.
+`APIPlugin` exposes the hash generated by Webpack
+as a special global variable `__webpack_hash__`,
+and you can use the hash at runtime in your application.
+
+`webpack.base.js`
+
+```js
+const APIPlugin = require('webpack/lib/APIPlugin');
+
+module.exports = {
+  ...
+  ...
+  plugins: [
+    new APIPlugin(),
+  ],
+};
+```
+
+and it allows you to use the hash:
+
+```js
+const worker = new SharedWorker(`./my_worker.js?{__webpack_hash__}`);
+```
+
+&nbsp;
+
+### 2-3. Using Pixi Legacy
+
+Some browsers do not support WebGL the way Pixi v5 wants,
+and must fallback to canvas rendering.
+There, we need `pixi.js-legacy` instead.  
+There are several ways to handle this,
+but I found
+[a neat solution](https://github.com/inlet/react-pixi/issues/126#issuecomment-514184770),
+and this is what I do in this project.  
+The idea is to export both `pixi.js` and `pixi.js-legacy` in the codebase,
+and use aliases to internally handle names.  
+Whenever looking up `pixi.js`, it refers to `src/lib/pixi.js`:
+
+**# webpack.base.js**
+
+```js
+  resolve: {
+    extensions: ['.js', '.jsx'],
+    alias: {
+      'pixi.js': path.resolve(__dirname, 'src/lib/pixi.js'),
+      'pixi.js-stable': path.resolve(__dirname, 'node_modules/pixi.js'),
+      'react-pixi$': 'react-pixi-fiber/react-pixi-alias',
+      '@': path.join(__dirname, 'src'),
+    },
+  },
+```
+
+**# src/lib/pixi.js**
+
+```js
+export * from 'pixi.js-stable';
+export * from 'pixi.js-legacy';
+```
+
+where `pixi.js-stable` is a newly defined alias to the original `pixi.js`.
+
+&nbsp;
+
+### 2-4. App Structure
 
 It is probably worth describing how the app work.  
-If you are interested only in UMD library, you may stop reading.
+If you are only interested in UMD library, you may stop reading.
 
 #### (a) Basic Entry
 
@@ -292,7 +369,9 @@ Now, it is the `Widget` component which renders the actual content:
 
 ```jsx
 import { AirportContent as Content } from './content';
-
+...
+...
+...
 export const Widget = ({ config: given }) => {
   const [worker, setWorker] = useState();
   const [stageOptions, setStageOptions] = useState(DEFAULT_STAGE_OPTIONS);
@@ -330,8 +409,15 @@ export const Widget = ({ config: given }) => {
     }
   }, [worker]);
 
+  // Just showing you can use 'emotion' for styles.
   return (
-    <Stage id="airport-stage" options={stageOptions}>
+    <Stage
+      id="airport-stage"
+      options={stageOptions}
+      css={css`
+        background-color: #f00;
+      `}
+    >
       <Content
         id="airport-content"
         cw={stageOptions.width}
@@ -458,9 +544,9 @@ export const AirportDemo = () => {
 ### 3-1. Installed NPM Packages All
 
 ```
-yarn add ramda pixi.js pixi.js-legacy react-pixi-fiber@1.0.0-beta.4
+yarn add @emotion/react pixi.js pixi.js-legacy react-pixi-fiber@1.0.0-beta.4 ramda
 
-yarn add --dev @babel/core @babel/preset-env @babel/preset-react @babel/cli core-js@3 @babel/runtime-corejs3 babel-loader file-loader style-loader css-loader postcss-loader webpack webpack-cli webpack-merge clean-webpack-plugin html-webpack-plugin license-webpack-plugin autoprefixer prettier http-server
+yarn add --dev @babel/core @babel/preset-env @babel/preset-react @babel/cli core-js@3 @babel/runtime-corejs3 babel-plugin-macros babel-loader file-loader style-loader css-loader postcss-loader webpack webpack-cli webpack-merge clean-webpack-plugin html-webpack-plugin license-webpack-plugin @emotion/babel-plugin-jsx-pragmatic autoprefixer prettier http-server
 ```
 
 ### 3-2. Babel
@@ -516,7 +602,21 @@ See [issues with "webpack-dev-server"](#5-2-issues-webpack-dev-server).
 
 &nbsp;
 
-### 3-6. Other Dependencies
+### 3-6. Emotion
+
+- babel-plugin-macros
+- @emotion/babel-plugin-jsx-pragmatic
+- @emotion/react (for `dependencies`)
+
+```
+yarn add --dev babel-plugin-macros @emotion/babel-plugin-jsx-pragmatic
+
+yarn add @emotion/react
+```
+
+&nbsp;
+
+### 3-7. Other Dependencies
 
 - ramda
 - pixi.js
@@ -533,7 +633,7 @@ yarn add ramda pixi.js pixi.js-legacy react-pixi-fiber@1.0.0-beta.4
 yarn add --dev http-server
 ```
 
-Check out a neat trick when using `pixi.js-legacy` (see _[5-6. Using Pixi Legacy](#5-6-using-pixi-legacy)_)
+Check out a neat trick when using `pixi.js-legacy` (see _[2-3. Using Pixi Legacy](#2-3-using-pixi-legacy)_)
 
 &nbsp;
 
@@ -544,7 +644,7 @@ Note: `chrome://inspect/#workers` to inspect running workers.
 ### Build for DEV
 
 ```
-yarn build:dev
+yarn start
 ```
 
 ### Build for PROD
@@ -563,26 +663,13 @@ yarn serve
 
 ## 5. Notes
 
-### 5-1. Issues: Module Exportss
-
-When exporting UMD library, you may encounter tons of issues.  
-(e.g. `export default`, etc.)  
-Here is a list of plugins you may want to dig in:
-
-- <s>@babel/plugin-transform-modules-umd</s>
-- @babel/plugin-proposal-export-default-from
-- @babel/plugin-proposal-export-namespace-from
-- babel-plugin-add-module-exports
-
-&nbsp;
-
-### 5-2. Issues: webpack-dev-server
+### 5-1. Issues: webpack-dev-server
 
 As [mentioned](#1-about), `webpack-dev-server` does not work,
 and it is due to Webpack v5 release on 10/10/2020.
 I had mainly 2 issues.
 The first issue was that the bundled library exporting an empty object when using `webpack-dev-server`.
-For this project, specifically, `Airport.app` became `{}`.
+For this project, specifically, `Memo.app` became `{}`.
 It was a bug, and a
 [solution](https://github.com/webpack/webpack-dev-server/issues/2484#issuecomment-749497713)
 was to use `webpack-dev-server@4.0.0-beta.0`.
@@ -591,82 +678,94 @@ For this, I still have no solutions.
 
 &nbsp;
 
-### 5-3. Issues: Emotion & Tailwind
+### 5-2. Issues: Tailwind
 
-Attempt to use `twin.macro` (Twin) for Emotion and Tailwind fails.
+Attempt to use `twin.macro` (Tailwind macro, or Twin) fails.  
+There are 2 reasons:  
+(1) `twin.macro` uses CommonJS style libraries internally,
+and Webpack 5 does not like that.  
+(2) Runtime error for `__cssprop`
 
-Note that Twin v2 was recently released as to support:
+For (1) is not an issue with Webpack 4, and I will talk about it later.  
+For (2), it has to do with the recent release of Twin v2 which supports:
 
 - tailwind@2 ([released on Nov. 19, 2020](https://github.com/ben-rogerson/twin.macro/releases/tag/2.0.0))
 - emotion@11 ([released on Nov. 12, 2020](https://emotion.sh/docs/emotion-11))
 
-There is an instruction given in the above release note,
-but _it seems to fail when building as an UMD library..._
-
+They give a bit of migration tips in the release note,
+but it seems to fail for UMD libraries.
 It builds fine, but I get the following runtime error:
 
 ```
 index.jsx:13 Uncaught ReferenceError: __cssprop is not defined
 ```
 
-If not for UMD library, it should work just fine.
+Let's talk about (1).  
+So, with Webpack 5, I get the error at build time:
 
-Another workaround worth consider:  
-https://github.com/ben-rogerson/twin.macro/issues/184#issuecomment-727236689
-
-FYI: in case you want to use Twin in a normal manner (not UMD), then here are the packages you need:
-
-- babel-plugin-macros
-- @emotion/babel-plugin-jsx-pragmatic
-- @emotion/react &lt;-- Not for "devDependencies" but "dependencies".
-- @emotion/styled &lt;-- Not for "devDependencies" but "dependencies".
-- twin.macro &lt;-- Not for "devDependencies" but "dependencies".
-
-and prepare the following config files:
-
-`babel.config.js`
-
-```js
-module.exports = {
-  presets: [
-    [
-      '@babel/preset-env',
-      {
-        useBuiltIns: 'entry',
-        corejs: 3,
-        targets: {
-          esmodules: true,
-        },
-      },
-    ],
-    '@babel/preset-react',
-  ],
-  plugins: [
-    'babel-plugin-macros',
-    [
-      '@emotion/babel-plugin-jsx-pragmatic',
-      {
-        export: 'jsx',
-        import: '__cssprop',
-        module: '@emotion/react',
-      },
-    ],
-    [
-      '@babel/plugin-transform-react-jsx',
-      {
-        pragma: '__cssprop',
-        pragmaFrag: 'React.Fragment',
-      },
-    ],
-  ],
-};
 ```
+BREAKING CHANGE: webpack < 5 used to include polyfills for node.js core modules by default.
+This is no longer the case. Verify if you need this module and configure a polyfill for it.
+```
+
+This is because Webpack 5 no longer supports automatic polyfill for Node.js modules,
+and you have to manually resolve the modules in use (one by one).
+
+Here is how you polyfill by yourself, but remember, it still fails at runtime...
+If anyone figured out a solution for using `twin.macro` in UMD library,
+please, let me know!
+
+```
+yarn add --dev util path-browserify url os-browserify process imports-loader
+```
+
+`webpack.base.js`
+
+```
+  resolve: {
+    extensions: ['.js', '.jsx'],
+    alias: {
+      '@': path.join(__dirname, 'src'),
+    },
+    fallback: {
+      util: require.resolve('util/'),
+      path: require.resolve('path-browserify'),
+      url: require.resolve('url/'),
+      os: require.resolve('os-browserify/browser'),
+      fs: false,
+      module: false,
+    },
+  },
+  ...
+  ...
+  module: {
+    rules: [
+      ...
+      ...
+      {
+        test: /node_modules\/resolve\/lib\/core\.js$/,
+        use: [{
+          loader: 'imports-loader',
+          options: {
+            type: 'commonjs',
+            imports: ['single process/browser process'],
+          },
+        }],
+      },
+```
+
+This
+[issue](https://github.com/vfile/vfile/issues/38#issuecomment-640479137)
+describes the problem in depth, and here is another
+[issue](https://github.com/vfile/vfile/issues/38#issuecomment-683198538).
+
+In case you solved the issue, remember that you also need
+to configure `babel-plugin-macros.config.js` to use Tailwind:
 
 `babel-plugin-macros.config.js`
 
 ```
 module.exports = {
-  // preset: 'emotion',
   twin: {
     styled: {
       import: 'default',
@@ -680,70 +779,21 @@ module.exports = {
       import: 'Global',
       from: '@emotion/react',
     },
-    config: './src/tailwind.config.js',
-    dataTwProp: true,
+    config: './src/tailwind.config.js', // <-- HERE
+    dataTwProp: true, // <-- HERE
     debugPlugins: false,
     debug: false,
   },
 };
 ```
 
-### 5-4. APIPlugin - Using Webpack Hash
-
-This is a personal note.
-For `airport.app.js`, we have a Webpack hash added.
-But, we want the same for `airport.worker.js`.
-Instead of having this:
-
-```js
-const worker = new SharedWorker('./my_worker.js');
-```
-
-we want something like this:
-
-```js
-const worker = new SharedWorker('./my_worker.js?4e066ad15f78a871e174');
-```
-
-This is where `APIPlugin` of Webpack's comes in.
-`APIPlugin` exposes the hash generated by Webpack
-as a special global variable `__webpack_hash__`,
-and you can use the hash at runtime in your application.
-
-`webpack.base.js`
-
-```js
-const APIPlugin = require('webpack/lib/APIPlugin');
-
-module.exports = {
-  ...
-  ...
-  plugins: [
-    new APIPlugin(),
-  ],
-};
-```
-
-and it allows you to use the hash:
-
-```js
-const worker = new SharedWorker(`./my_worker.js?{__webpack_hash__}`);
-```
-
 &nbsp;
 
-### 5-5. Using Preact - Minimize App Size
+### 5-3. Using Preact - Minimize App Size
 
-If you are are planning to use
+If you want to use
 [preact](https://github.com/preactjs/preact),
 here are the steps.
-
-```
-IMPORTANT:
-Be aware, 'preact' DOES NOT WORK with 'react-pixi-fiber'!!!
-It is due to 'react-pixi-fiber' requires _reconciliation_
-which is available for React version 16 and up...
-```
 
 **# Step (1): Using Preact**
 
@@ -790,44 +840,6 @@ and you need resolutions for the name.
     }
   }
 ```
-
-&nbsp;
-
-### 5-6. Using Pixi Legacy
-
-Some browsers do not support WebGL the way Pixi v5 wants,
-and must fallback to canvas rendering.
-There, we need `pixi.js-legacy` instead.  
-There are several ways to handle this,
-but I found
-[a neat solution](https://github.com/inlet/react-pixi/issues/126#issuecomment-514184770),
-and this is what I do in this project.  
-The idea is to export both `pixi.js` and `pixi.js-legacy` in the codebase,
-and use aliases to internally handle names.  
-Whenever looking up `pixi.js`, it refers to `src/lib/pixi.js`:
-
-**# webpack.base.js**
-
-```js
-  resolve: {
-    extensions: ['.js', '.jsx'],
-    alias: {
-      'pixi.js': path.resolve(__dirname, 'src/lib/pixi.js'),
-      'pixi.js-stable': path.resolve(__dirname, 'node_modules/pixi.js'),
-      'react-pixi$': 'react-pixi-fiber/react-pixi-alias',
-      '@': path.join(__dirname, 'src'),
-    },
-  },
-```
-
-**# src/lib/pixi.js**
-
-```js
-export * from 'pixi.js-stable';
-export * from 'pixi.js-legacy';
-```
-
-where `pixi.js-stable` is a newly defined alias to the original `pixi.js`.
 
 &nbsp;
 

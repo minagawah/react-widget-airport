@@ -1,4 +1,5 @@
 import { Stage } from 'react-pixi-fiber';
+import { css } from '@emotion/react';
 
 const { useState, useEffect } = React;
 
@@ -57,8 +58,15 @@ export const Widget = ({ config: given }) => {
     }
   }, [worker]);
 
+  // Just showing you can use 'emotion' for styles.
   return (
-    <Stage id="airport-stage" options={stageOptions}>
+    <Stage
+      id="airport-stage"
+      options={stageOptions}
+      css={css`
+        background-color: #f00;
+      `}
+    >
       <Content
         id="airport-content"
         cw={stageOptions.width}
