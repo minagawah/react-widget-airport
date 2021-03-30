@@ -42,7 +42,7 @@ Instead of being _"installed"_, this app is to be _"embedded"_ in other apps.
 (or, you can totally call it from another React apps.
 _[See Example](#b-calling-from-other-react-apps)_)
 
-It exposes the widget globally (in our case `Memo`).  
+It exposes the widget globally (in our case `Airport`).  
 So, this is how embedding is done:
 
 ```html
@@ -169,7 +169,7 @@ As you can see, it exports `init`.
 If you want to use `export default`,
 then _[you need a special setup for babel](#5-1-issues-module-exportss)_.
 
-The module is now exposed globally as `Memo`.
+The module is now exposed globally as `Airport`.
 
 When people want to use the widget,
 they would download files from `dist` directory,
@@ -240,8 +240,8 @@ so that I don't have to worry about browser cache when developing.
 Alright. This has nothing to do with UMD library.
 This is about sharing _"hash"_ generated between two files.
 I told you in the previous that I use _"hash"_.
-For the same _"hash"_ that is appended to `memo.app.js`,
-I want the same for `memo.worker.js`.
+For the same _"hash"_ that is appended to `airport.app.js`,
+I want the same for `airport.worker.js`.
 Instead of having this:
 
 ```js
@@ -669,7 +669,7 @@ As [mentioned](#1-about), `webpack-dev-server` does not work,
 and it is due to Webpack v5 release on 10/10/2020.
 I had mainly 2 issues.
 The first issue was that the bundled library exporting an empty object when using `webpack-dev-server`.
-For this project, specifically, `Memo.app` became `{}`.
+For this project, specifically, `Airport.app` became `{}`.
 It was a bug, and a
 [solution](https://github.com/webpack/webpack-dev-server/issues/2484#issuecomment-749497713)
 was to use `webpack-dev-server@4.0.0-beta.0`.
