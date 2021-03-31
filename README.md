@@ -35,6 +35,10 @@ A React widget (UMD library) for Airport animations with flight departures/arriv
 
 ## 1. About
 
+**ALTERNATIVE:**
+**If you would like a simpler implementation, **
+**check out [react-widget-setup-2021](https://github.com/minagawah/react-widget-setup-2021).**
+
 #### Embedded React Widget
 
 This is an attempt to show how you can bundle your React app into a widget (UMD library).  

@@ -66,11 +66,7 @@ export const hex_to_rgb = (hex, alpha = 1) => {
   return rgb;
 };
 
-export const pound_hex_to_rgb = compose(
-  hex_to_rgb,
-  hex_to_rgb,
-  pound_hex_to_dec
-);
+export const pound_hex_to_rgb = compose(hex_to_rgb, pound_hex_to_dec);
 
 export const rgb_to_hsl = (rgb = []) => {
   let [r, g, b] = rgb;
@@ -171,15 +167,15 @@ export const rgb_to_pound_hex = (rgb = []) => {
   let hexB = b.toString(16);
 
   if (hexR.length === 1) {
-    hexR = `0${r}`;
+    hexR = `0${hexR}`;
   }
 
   if (hexG.length === 1) {
-    hexG = `0${g}`;
+    hexG = `0${hexG}`;
   }
 
   if (hexB.length == 1) {
-    hexB = `0${b}`;
+    hexB = `0${hexB}`;
   }
 
   return `#${hexR}${hexG}${hexB}`;
