@@ -35,11 +35,13 @@ A React widget (UMD library) for Airport animations with flight departures/arriv
 
 ## 1. About
 
-**ALTERNATIVE:**
-**If you would like a simpler implementation, **
-**check out [react-widget-setup-2021](https://github.com/minagawah/react-widget-setup-2021).**
+**ALTERNATIVE:**  
+If you would like a SIMPLER implementation,  
+check out **[react-widget-setup-2021](https://github.com/minagawah/react-widget-setup-2021)**.
 
-#### Embedded React Widget
+&nbsp;
+
+### Embedded React Widget
 
 This is an attempt to show how you can bundle your React app into a widget (UMD library).  
 Instead of being _"installed"_, this app is to be _"embedded"_ in other apps.  
@@ -50,14 +52,8 @@ It exposes the widget globally (in our case `Airport`).
 So, this is how embedding is done:
 
 ```html
-<script
-  crossorigin
-  src="https://unpkg.com/react@17/umd/react.production.min.js"
-></script>
-<script
-  crossorigin
-  src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"
-></script>
+<script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
 
 <script type="text/javascript" src="./airport.app.js"></script>
 
@@ -66,7 +62,20 @@ So, this is how embedding is done:
 </script>
 ```
 
-#### React Pixi Fiber
+Notice this app depends on external `React` and `ReactDOM`.  
+Also, while it is not necessary,
+it is better that we define `peerDependencies` in `package.json`:
+
+`package.json`
+
+```
+  "peerDependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  }
+```
+
+### React Pixi Fiber
 
 It also demonstrates implementing a canvas animation using
 [reac-pixi-fiber](https://github.com/michalochman/react-pixi-fiber).  
@@ -80,7 +89,7 @@ See _[the problem](https://github.com/inlet/react-pixi/issues/5)_ they have.
 Note #2: Note that `reac-pixi-fiber` does _not_ work with `preact`
 (See: _[Why](#3-6-react)_ or _[5-5. Using Preact](#5-5-using-preact---minimize-app-size)_).
 
-#### SharedWorker
+### SharedWorker
 
 As you can see, it outputs 2 bundle files (you can output 1).
 For this app, one of the files is for
@@ -100,9 +109,7 @@ worker.port.postMessage({
 });
 ```
 
-&nbsp;
-
-### # Issues
+### Issues
 
 Yeah. I have some issues. We all fail, right?
 
@@ -118,7 +125,7 @@ Yeah. I have some issues. We all fail, right?
 ### 2-1. UMD Library
 
 Building an UMD library is relatively easy.  
-It's just that we frequently bump into problems when working with `babel`...
+It's just that we often bump into problems when working with `babel`...
 
 `webpack.base.js`
 
@@ -241,11 +248,12 @@ so that I don't have to worry about browser cache when developing.
 
 ### 2-2. APIPlugin - Using Webpack Hash
 
-Alright. This has nothing to do with UMD library.
-This is about sharing _"hash"_ generated between two files.
+Alright. This is something that has nothing to do with UMD library,
+but it is about sharing the _"hash"_ generated between two files.
 I told you in the previous that I use _"hash"_.
-For the same _"hash"_ that is appended to `airport.app.js`,
-I want the same for `airport.worker.js`.
+For the same _"hash"_ which is appended to `airport.app.js`,
+I want the same appended for `airport.worker.js` as well.
+
 Instead of having this:
 
 ```js
@@ -277,7 +285,7 @@ module.exports = {
 };
 ```
 
-and it allows you to use the hash:
+and it allows you to use the exposed hash like this:
 
 ```js
 const worker = new SharedWorker(`./my_worker.js?{__webpack_hash__}`);
@@ -337,14 +345,9 @@ So, the app starts when it renders React app into a designated DOM:
 ```html
 <div id="airport"></div>
 
-<script
-  crossorigin
-  src="https://unpkg.com/react@17/umd/react.production.min.js"
-></script>
-<script
-  crossorigin
-  src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"
-></script>
+<script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+
 <script type="text/javascript" src="./airport.app.js"></script>
 ```
 
